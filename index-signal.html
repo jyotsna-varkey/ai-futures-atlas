@@ -114,7 +114,8 @@ h1,h2,h3{text-wrap:balance}
 .edge{fill:none;stroke:var(--rule);stroke-width:1;transition:opacity .35s var(--ease),stroke .35s var(--ease),stroke-width .35s var(--ease)}
 .edge.fb{stroke-dasharray:3 4}
 .edges.focus .edge{opacity:.22}
-.edges.focus .edge.on{opacity:1;stroke:var(--ink);stroke-width:2;stroke-dasharray:6 5;animation:flow 1s linear infinite}
+.edges.focus .edge.on{opacity:1;stroke:var(--ink);stroke-width:2}
+.edges.focus .edge.on.fb{stroke-dasharray:5 5;animation:flow 1s linear infinite}
 @keyframes flow{to{stroke-dashoffset:-22}}
 .mk-n{fill:var(--rule)} .mk-tech,.mk-econ,.mk-safe,.mk-power{fill:var(--ink)}
 .band{position:relative;z-index:1;display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;padding-block:16px}
@@ -490,7 +491,7 @@ details.how .mgrp:first-child{margin-top:0;border-top:0;padding-top:0}
           </div>
           <div class="map-key">
             <span><svg width="34" height="10" aria-hidden="true"><path d="M1 5H28" stroke="currentColor" stroke-width="1.3"/><path d="M27 1.5L33 5L27 8.5z" fill="currentColor"/></svg>how one question turns out shapes the one it points to</span>
-            <span><svg width="34" height="10" aria-hidden="true"><path d="M1 5H28" stroke="currentColor" stroke-width="1.3" stroke-dasharray="3 4"/><path d="M27 1.5L33 5L27 8.5z" fill="currentColor"/></svg>a later question feeding back into an earlier one</span>
+            <span><svg width="34" height="10" aria-hidden="true"><path d="M1 5H28" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 4"/><path d="M27 1.5L33 5L27 8.5z" fill="currentColor"/></svg>a later question feeding back into an earlier one</span>
             <span><span class="key-on">Orange answer</span> where today’s numbers lean</span>
             <span>Hover a card to preview its links. Arrows are hidden on narrow screens; each card lists its links instead.</span>
           </div>
