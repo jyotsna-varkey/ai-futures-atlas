@@ -11,3 +11,5 @@ An interactive, source-linked framework for thinking about how AI reshapes the e
 - `signal_style_long_mockup.html`: the style reference for the Signal version.
 
 Each page is one self-contained HTML file. Open it in a browser; no build step.
+
+The live site (GitHub Pages) serves `index-signal.html` at the root and `index.html` at `/classic.html`. It redeploys on every push to `main`.
