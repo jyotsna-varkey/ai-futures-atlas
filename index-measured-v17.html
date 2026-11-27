@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Futures Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400..800&family=Source+Sans+3:wght@400..700&display=swap">
+<style>
+/* VOICE work: an analyst's field atlas, calm and exact, numbers first
+   IDEA a surveyor's reading sheet: each open question gets its gauge, its latest reading and the mark it would need to hit
+   PICTURE the capability line (METR horizons on a log scale) and the money line (quarterly capex), drawn large on the first screen
+   COLOUR warm paper ground (the original atlas), four layer colours as tags, chart blue and orange from a validated palette
+   TYPE Libre Franklin for headlines and figures (tabular), Source Sans 3 for text: a business newspaper on pink newsprint
+   LAYOUT laptop: finding and key figures across, two charts beneath, then the reading sheet; phone: one column in the same order */
+:root{
+  --bg:#FBE9DD;--bg2:#F4DACB;--ink:#211A14;--ink2:#564C43;--ink3:#857a6e;--on:#F6F1EB;
+  --line:rgba(70,52,34,.14);--line2:rgba(70,52,34,.28);
+  --card:rgba(255,248,243,.94);--solid:#FFF8F3;--glass:rgba(255,246,240,.6);--glass2:rgba(255,247,241,.86);
+  --sh:0 1px 0 rgba(255,255,255,.8) inset,0 1px 2px rgba(60,40,20,.06),0 10px 24px -14px rgba(60,40,20,.25);
+  --tech:#1C6D77;--econ:#9A610C;--safe:#AE3F28;--power:#365A8C;
+  --wA:#5F7189;--wB:#AD7618;--wC:#2F7F51;--wD:#B04A26;--wE:#2B4777;--wF:#9E2236;--wG:#7A566E;
+  --s1:#257de0;--s2:#f47230;--grid:rgba(70,52,34,.11);
+  --link:#14606A;--good:#2f7f51;--warn:#b7791f;
+  --fd:"Libre Franklin","Helvetica Neue",Arial,sans-serif;--fb:"Source Sans 3","Helvetica Neue",Arial,sans-serif;--fm:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.22,.9,.24,1);--top:62px;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#15120F;--bg2:#1E1915;--ink:#F2EBE1;--ink2:#C6BBAE;--ink3:#93887b;--on:#15120F;
+  --line:rgba(242,235,225,.11);--line2:rgba(242,235,225,.25);
+  --card:rgba(36,31,26,.94);--solid:#2A241F;--glass:rgba(30,26,22,.55);--glass2:rgba(29,25,21,.86);
+  --sh:0 1px 0 rgba(255,255,255,.04) inset,0 10px 24px -14px rgba(0,0,0,.7);
+  --tech:#5DB9C3;--econ:#E2A94B;--safe:#E27C61;--power:#82A4D8;
+  --wA:#9AA9BD;--wB:#E3AE52;--wC:#6CC28E;--wD:#E5845E;--wE:#82A0D4;--wF:#E36B7E;--wG:#C297B1;
+  --s1:#338ced;--s2:#e76624;--grid:rgba(242,235,225,.1);--link:#88CED5;--good:#6CC28E;--warn:#E2A94B;color-scheme:dark}}
+:root[data-theme=dark]{
+  --bg:#15120F;--bg2:#1E1915;--ink:#F2EBE1;--ink2:#C6BBAE;--ink3:#93887b;--on:#15120F;
+  --line:rgba(242,235,225,.11);--line2:rgba(242,235,225,.25);
+  --card:rgba(36,31,26,.94);--solid:#2A241F;--glass:rgba(30,26,22,.55);--glass2:rgba(29,25,21,.86);
+  --sh:0 1px 0 rgba(255,255,255,.04) inset,0 10px 24px -14px rgba(0,0,0,.7);
+  --tech:#5DB9C3;--econ:#E2A94B;--safe:#E27C61;--power:#82A4D8;
+  --wA:#9AA9BD;--wB:#E3AE52;--wC:#6CC28E;--wD:#E5845E;--wE:#82A0D4;--wF:#E36B7E;--wG:#C297B1;
+  --s1:#338ced;--s2:#e76624;--grid:rgba(242,235,225,.1);--link:#88CED5;--good:#6CC28E;--warn:#E2A94B;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:80px;font-synthesis:none}
+body{margin:0;font-variant-numeric:tabular-nums lining-nums;background:var(--bg);color:var(--ink);font:16px/1.55 var(--fb);overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-underline-offset:2px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.num{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.mesh{position:fixed;inset:-10%;z-index:0;pointer-events:none;opacity:.45;background:radial-gradient(36% 32% at 10% 6%,color-mix(in srgb,var(--tech) 13%,transparent),transparent 70%),radial-gradient(34% 30% at 90% 10%,color-mix(in srgb,var(--econ) 14%,transparent),transparent 70%),radial-gradient(40% 40% at 70% 90%,color-mix(in srgb,var(--power) 11%,transparent),transparent 70%)}
+.shell{position:relative;z-index:1}
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 74%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid var(--line)}
+.top-in{max-width:1280px;margin:0 auto;padding:10px max(16px,4vw);display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap}
+.brand{font:700 17px/1 var(--fd);letter-spacing:-.01em;display:flex;gap:9px;align-items:center;white-space:nowrap}
+.brand small{font:500 12px var(--fb);color:var(--ink3)}
+.tabs{display:flex;gap:2px;padding:4px;border-radius:999px;background:var(--glass);border:1px solid var(--line);margin-left:auto;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:0;background:none;padding:9px 14px;border-radius:999px;font:500 14px/1 var(--fb);color:var(--ink2);cursor:pointer;white-space:nowrap;transition:background .25s,color .25s}
+.tab[aria-selected=true]{background:var(--ink);color:var(--on)}
+.wrap{max-width:1280px;margin:0 auto;padding:28px max(16px,4vw) 72px}
+.view[hidden]{display:none}
+.view{animation:vin .5s var(--ease)}
+@keyframes vin{from{opacity:.4;transform:translateY(8px)}}
+.lede{font-size:17px;color:var(--ink2);max-width:68ch;margin:10px 0 0}
+.h1{font:800 clamp(30px,4.2vw,46px)/1.08 var(--fd);letter-spacing:-.02em}
+.h2{font:750 clamp(22px,2.6vw,30px)/1.12 var(--fd);letter-spacing:-.015em}
+.h3{font:650 18px/1.25 var(--fd)}
+.muted{color:var(--ink3)}
+.small{font-size:13.5px}
+.sec{margin-top:44px}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 24px;margin-bottom:14px}
+.sec-head p{margin:0;color:var(--ink2);max-width:70ch;font-size:15px}
+.panel{background:var(--glass2);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh)}
+.tag{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--fb);color:var(--lc,var(--ink2));background:color-mix(in srgb,var(--lc,var(--ink)) 11%,transparent);border:1px solid color-mix(in srgb,var(--lc,var(--ink)) 28%,transparent);padding:5px 9px;border-radius:999px;white-space:nowrap}
+.tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--lc,var(--ink2))}
+/* key figures */
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;margin-top:22px}
+.fig-t{padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--line);box-shadow:var(--sh);display:flex;flex-direction:column;gap:4px;text-decoration:none;color:inherit;transition:transform .3s var(--ease)}
+.fig-t:hover{transform:translateY(-2px)}
+.fig-t b{font:600 clamp(22px,2.4vw,28px)/1.1 var(--fm);letter-spacing:-.02em;color:var(--ink)}
+.fig-t span{font-size:13.5px;line-height:1.4;color:var(--ink2)}
+.fig-t em{font-style:normal;font-size:12.5px;color:var(--lc,var(--ink3))}
+/* charts */
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px}
+.chart{padding:16px 16px 10px}
+.chart h3{font:650 16.5px/1.3 var(--fd)}
+.chart .sub{font-size:13.5px;color:var(--ink2);margin:4px 0 6px}
+.fig{position:relative;height:300px}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fig svg text{font:12.5px var(--fb);fill:var(--ink2)}
+.fig svg text.n{font-family:var(--fm)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2);margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.fig svg [data-t]:focus{outline:none}
+.fig svg [data-t]:focus-visible{stroke:var(--ink);stroke-width:3}
+.cite{font-size:12.5px;color:var(--ink3);margin-top:6px}
+.tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--on);font:13px/1.4 var(--fb);padding:7px 10px;border-radius:9px;max-width:240px;opacity:0;transition:opacity .15s}
+/* reading sheet */
+.sheet{width:100%;border-collapse:collapse;font-size:14.5px}
+.sheet th{font:600 13px var(--fb);color:var(--ink3);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line2)}
+.sheet td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+.sheet tr{cursor:pointer;transition:background .25s}
+.sheet tbody tr:hover{background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.sheet .q b{display:block;font:650 15px/1.25 var(--fd)}
+.sheet .q span{font-size:13px;color:var(--ink3)}
+.rd b{font:600 17px/1.2 var(--fm);display:block;white-space:nowrap}
+.rd span{font-size:13px;color:var(--ink2)}
+.lean{display:inline-flex;gap:6px;align-items:center;font-size:13.5px;font-weight:600;white-space:nowrap}
+.conf{font:500 12px var(--fb);color:var(--ink3);display:block;margin-top:2px}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--lc,var(--ink3))}
+.dots i.on{background:var(--lc,var(--ink3))}
+.scroll{overflow-x:auto}
+/* map */
+.map-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:24px;align-items:start;margin-top:18px}
+.map{position:relative;padding-top:54px}
+.edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+.edge{fill:none;stroke:var(--line2);stroke-width:1.1;transition:opacity .4s,stroke .4s}
+.edge.fb{stroke-dasharray:3 4}
+.edges.focus .edge{opacity:.1}
+.edges.focus .edge.on{opacity:1;stroke:var(--ec);stroke-width:1.8;stroke-dasharray:7 6;animation:flow 1.1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-26}}
+.mk-n{fill:var(--line2)}.mk-tech{fill:var(--tech)}.mk-econ{fill:var(--econ)}.mk-safe{fill:var(--safe)}.mk-power{fill:var(--power)}
+.band{position:relative;z-index:1;display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;padding-block:14px}
+.band+.band{border-top:1px dashed var(--line)}
+.band-name{font:700 16px/1.1 var(--fd);color:var(--lc)}
+.band-sub{font-size:13px;color:var(--ink3);margin-top:4px}
+.cards{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:12px}
+.node{appearance:none;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:var(--sh);transition:transform .35s var(--ease),border-color .35s}
+.node:hover{transform:translateY(-2px)}
+.node.sel{border-color:var(--lc);box-shadow:0 0 0 3px color-mix(in srgb,var(--lc) 22%,transparent),var(--sh)}
+.node.rel{border-color:color-mix(in srgb,var(--lc) 45%,var(--line))}
+.node .code{font:600 12px var(--fm);color:var(--lc)}
+.node .nm{font:700 14px/1.2 var(--fd);letter-spacing:-.015em;hyphens:auto}
+.node .nq{font-size:12.5px;line-height:1.42;color:var(--ink2)}
+.node .nb{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto;padding-top:6px}
+.node .nb span{font:500 11px/1 var(--fb);color:var(--ink3);border:1px solid var(--line);border-radius:6px;padding:4px 6px;white-space:nowrap}
+.node .nb span.on{color:var(--lc);font-weight:650;border-color:color-mix(in srgb,var(--lc) 50%,transparent);background:color-mix(in srgb,var(--lc) 12%,transparent)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.map.focus .node{opacity:.62}.map.focus .node.rel,.map.focus .node.sel{opacity:1}
+.node{transition:transform .35s var(--ease),border-color .35s,opacity .35s}
+.ev{padding:14px 0;border-top:1px solid var(--line)}.ev:first-of-type{border-top:0;padding-top:4px}
+.ev h4{font:650 15px/1.3 var(--fd);margin:0 0 4px}.ev>p{margin:0 0 10px;font-size:14px;color:var(--ink2)}
+.evd{margin-top:8px}
+.evd summary{font:650 14.5px/1.35 var(--fd)}
+.evd .pv{font:600 13px var(--fm);color:var(--lc);margin-left:8px;white-space:nowrap}
+.evd[open] .pv{display:none}
+.evd .evt{margin:0 0 6px}
+.met{display:grid;grid-template-columns:minmax(0,118px) minmax(0,1fr);gap:2px 14px;padding:7px 0;align-items:baseline}
+.met b{font:600 16.5px/1.25 var(--fm);overflow-wrap:anywhere}
+.met span{font-size:13.5px;line-height:1.4;color:var(--ink)}
+.met small{grid-column:2;font-size:12.5px;color:var(--ink3)}
+.stand{padding:14px;border-radius:14px;background:color-mix(in srgb,var(--lc) 9%,var(--solid));border:1px solid color-mix(in srgb,var(--lc) 25%,transparent);margin-top:16px}
+.stand b{font:650 16px/1.3 var(--fd);display:block}
+.stand .conf{display:inline-flex;gap:6px;align-items:center;margin:4px 0 6px}
+.stand p{margin:0;font-size:14px;color:var(--ink2)}
+.detail{position:sticky;top:calc(var(--top) + 14px);max-height:calc(100vh - var(--top) - 28px);overflow:auto;overscroll-behavior:contain;padding:22px}
+.detail .q{font:500 16px/1.45 var(--fb);margin:8px 0 0}
+.dh{font:650 15px/1.3 var(--fd);margin:22px 0 8px}
+.reading{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:baseline;padding:14px;border-radius:14px;background:color-mix(in srgb,var(--lc) 9%,var(--solid));border:1px solid color-mix(in srgb,var(--lc) 25%,transparent);margin-top:16px}
+.reading b{font:600 clamp(24px,3vw,30px)/1.05 var(--fm);grid-row:span 2}
+.reading span{font-size:13.5px;color:var(--ink2)}
+.br{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:color-mix(in srgb,var(--solid) 60%,transparent)}
+.br.now{border-color:var(--lc);background:color-mix(in srgb,var(--lc) 8%,var(--solid))}
+.br b{font:650 14.5px/1.3 var(--fd)}
+.br b small{font:600 12px var(--fb);color:var(--lc);margin-left:8px}
+.br p{margin:4px 0 0;font-size:13.5px;color:var(--ink2)}
+details{border:1px solid var(--line);border-radius:12px;padding:0 12px;margin-top:10px;background:color-mix(in srgb,var(--solid) 50%,transparent)}
+summary{cursor:pointer;padding:11px 0;font-weight:600;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::after{content:"+";font:500 18px/1 var(--fm);color:var(--ink3)}
+details[open] summary::after{content:"\2212"}
+summary::-webkit-details-marker{display:none}
+details p,details li{font-size:14px;color:var(--ink2)}
+details>div{padding-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 11px;font:500 13px/1.2 var(--fb);cursor:pointer;transition:border-color .3s}
+.chip:hover{border-color:var(--lc,var(--wc,var(--ink3)))}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--lc,var(--wc,var(--ink3)))}
+.chip[aria-pressed=true]{border-color:var(--wc,var(--lc));background:color-mix(in srgb,var(--wc,var(--lc)) 13%,var(--card))}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--on);border-radius:999px;padding:11px 16px;font:600 14px/1 var(--fb);cursor:pointer;min-height:44px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line2)}
+.src{font-size:12.5px}
+/* path builder */
+.pb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:24px;align-items:start;margin-top:18px}
+.pb-group{padding:14px 16px 4px;margin-bottom:18px}
+.pb-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 18px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.pb-row:first-of-type{border-top:0}
+.pb-t{font:650 15px/1.25 var(--fd)}
+.pb-t .code{font:600 12px var(--fm);color:var(--lc);margin-right:6px}
+.pb-r{font-size:13px;color:var(--ink2);margin-top:2px}
+.seg{display:inline-flex;flex-wrap:wrap;padding:3px;border-radius:12px;background:color-mix(in srgb,var(--ink) 6%,transparent);border:1px solid var(--line);gap:2px;justify-self:end}
+.seg button{border:0;background:none;padding:9px 12px;border-radius:9px;font:500 13px/1 var(--fb);color:var(--ink3);cursor:pointer;min-height:38px;position:relative}
+.seg button[aria-pressed=true]{background:var(--solid);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08),0 4px 10px -4px rgba(0,0,0,.2)}
+.seg button.today::after{content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--lc)}
+.res{position:sticky;top:calc(var(--top) + 14px);max-height:calc(100vh - var(--top) - 28px);overflow:auto;overscroll-behavior:contain}
+.res-top{padding:20px;background:radial-gradient(120% 90% at 0 0,color-mix(in srgb,var(--wc) 22%,transparent),transparent 65%);border-bottom:1px solid var(--line)}
+.res-name{font:750 27px/1.05 var(--fd);letter-spacing:-.02em;margin:6px 0}
+.res-body{padding:4px 20px 20px}
+.fit{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 44px;gap:10px;align-items:center;border:0;background:none;padding:3px 0;width:100%;text-align:left;cursor:pointer}
+.fit .n{font-size:13px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fit.best .n{color:var(--ink);font-weight:600}
+.fit .t{height:8px;border-radius:99px;background:color-mix(in srgb,var(--ink) 8%,transparent);overflow:hidden}
+.fit .b{display:block;height:100%;border-radius:99px;background:var(--wc);width:0;opacity:.55;transition:width .7s var(--ease)}
+.fit.best .b{opacity:1}
+.fit .p{font:500 12.5px var(--fm);color:var(--ink3);text-align:right}
+.rtag{margin:10px 0 0;font:600 16px/1.4 var(--fd);color:var(--ink)}
+.pic dl{margin:0;display:grid;gap:10px}
+.pic dl div{display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px}
+.pic dt{font:600 12.5px/1.5 var(--fb);color:var(--wc,var(--ink3))}
+.pic dd{margin:0;font-size:14px;line-height:1.5;color:var(--ink2)}
+.qn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.qn div{padding:9px 10px;border-radius:10px;background:color-mix(in srgb,var(--wc) 8%,var(--solid));border:1px solid var(--line)}
+.qn b{display:block;font:600 15px/1.2 var(--fm)}
+.qn span{font-size:12.5px;color:var(--ink2)}
+/* worlds */
+.wt{width:100%;border-collapse:collapse;font-size:14px;min-width:860px}
+.wt th,.wt td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.wt thead th{font:600 13px var(--fb);color:var(--ink3);border-bottom:1px solid var(--line2)}
+.wt td.v{font-family:var(--fm);font-weight:600;white-space:nowrap}
+.wt td.v small{display:block;font:400 12px var(--fb);color:var(--ink3);white-space:normal}
+.wname{display:flex;gap:10px;align-items:flex-start}
+.wname i{flex:none;width:26px;height:26px;border-radius:8px;background:var(--wc);color:var(--on);font:600 13px/26px var(--fm);text-align:center;font-style:normal}
+.wname b{display:block;font:650 15px/1.2 var(--fd)}
+.wname span{font-size:12.5px;color:var(--ink3)}
+.wname small{display:block;font-size:13px;line-height:1.4;color:var(--ink2);margin-top:4px;max-width:230px}
+/* sources */
+.srct{width:100%;border-collapse:collapse;font-size:14px}
+.srct th,.srct td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.srct th{font:600 13px var(--fb);color:var(--ink3)}
+.srct td:first-child{font-weight:600}
+.gap-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.gap-list div{padding:14px;border:1px dashed var(--line2);border-radius:14px;background:var(--glass)}
+.gap-list b{font:650 15px var(--fd)}
+.gap-list p{margin:4px 0 0;font-size:14px;color:var(--ink2)}
+footer{max-width:1280px;margin:0 auto;padding:20px max(16px,4vw) 44px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+@media (max-width:1100px){.map-layout,.pb{grid-template-columns:minmax(0,1fr)}.detail,.res{position:relative;top:auto;max-height:none}}
+@media (max-width:900px){.charts{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.edges{display:none}.map{padding-top:6px}.band{grid-template-columns:minmax(0,1fr)}.cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}.pb-row{grid-template-columns:minmax(0,1fr)}.seg{justify-self:start}.tabs{margin-left:0;width:100%}}
+@media (max-width:600px){.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-radius:16px;overflow:visible}.tab{padding:9px 4px;font-size:13px;white-space:normal;text-align:center;line-height:1.15;border-radius:12px}.node .nq{display:none}.brand small{display:none}.sheet thead{display:none}.sheet tr{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--line)}.sheet td{border:0;padding:3px 0}.sheet td.q{grid-column:1/-1}.sheet td.src{grid-column:1/-1}.fig{height:260px}.qn{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){.top{position:relative}}
+@media (max-width:440px){.cards{gap:8px}.node{padding:10px}.fit{grid-template-columns:minmax(0,110px) minmax(0,1fr) 40px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="mesh" aria-hidden="true"></div>
+<div class="shell">
+<header class="top" id="top"><div class="top-in">
+  <div class="brand"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M2.5 11H8l3.5-6.5h8M8 11l3.5 6.5h8M11.5 11h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="11" r="2" fill="currentColor"/></svg>AI Futures Atlas <small>collected 25 Nov 2026</small></div>
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button class="tab" role="tab" data-v="map">Decision map</button>
+    <button class="tab" role="tab" data-v="paths">Path builder</button>
+    <button class="tab" role="tab" data-v="worlds">Worlds in numbers</button>
+    <button class="tab" role="tab" data-v="sources">Data sources</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+<section class="view" id="v-worlds" hidden>
+  <h2 class="h1">AI capability is compounding and money is pouring in, but the wider economy has barely moved yet.</h2>
+  <p class="lede">Today's headline numbers first, then the seven worlds they could lead to. Every figure links to its source. Where the numbers lean on each question is a judgment, shown with how confident it is.</p>
+  <div class="figs" id="figs"></div>
+  <div class="charts">
+    <div class="panel chart"><h3>The length of tasks AI can finish has doubled about every four months since 2023</h3><p class="sub">Length of software task (measured in skilled-human time) that each model completes, on a log scale</p><div class="fig" id="ch-metr"></div><div class="legend" id="lg-metr"></div><p class="cite">Source: <a href="https://metr.org/time-horizons/">METR time horizons</a>, data file <a href="https://metr.org/assets/benchmark_results_1_1.yaml">benchmark_results_1_1.yaml</a>. METR stopped updating the page on 8 Sep 2026; its tasks top out near 16 hours.</p></div>
+    <div class="panel chart"><h3>Big tech's quarterly capex has grown sixfold and now exceeds its operating cash flow</h3><p class="sub">Combined cash capex of Microsoft, Alphabet, Amazon and Meta, $ billions per calendar quarter</p><div class="fig" id="ch-capex"></div><div class="legend" id="lg-capex"></div><p class="cite">Source: company 10-Q and 10-K filings via <a href="https://data.sec.gov/api/xbrl/companyconcept/CIK0000789019/us-gaap/PaymentsToAcquirePropertyPlantAndEquipment.json">SEC XBRL</a> (<a href="https://data.sec.gov/api/xbrl/companyconcept/CIK0001652044/us-gaap/PaymentsToAcquirePropertyPlantAndEquipment.json">Alphabet</a>, <a href="https://data.sec.gov/api/xbrl/companyconcept/CIK0001018724/us-gaap/PaymentsToAcquireProductiveAssets.json">Amazon</a>, <a href="https://data.sec.gov/api/xbrl/companyconcept/CIK0001326801/us-gaap/PaymentsToAcquirePropertyPlantAndEquipment.json">Meta</a>). Excludes finance leases. Operating cash flow is summed from the same four companies' <a href="https://data.sec.gov/api/xbrl/companyconcept/CIK0000789019/us-gaap/NetCashProvidedByUsedInOperatingActivities.json">filings</a>.</p></div>
+    <div class="panel chart"><h3>AI lab revenue is now real money: Anthropic took $17B in one quarter</h3><p class="sub">Quarterly revenue, $ billions</p><div class="fig" id="ch-rev"></div><div class="legend" id="lg-rev"></div><p class="cite">Sources: Anthropic <a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm">IPO prospectus</a> (audited). OpenAI figures are press reports, not filings: <a href="https://siliconangle.com/2026/08/18/openai-falls-further-behind-anthropic-with-disappointing-revenue-growth-and-mounting-losses/">Q1 and Q2</a>, <a href="https://news.bloombergtax.com/private-equity/openai-third-quarter-revenue-soars-nearly-50-to-10-billion">Q3</a>.</p></div>
+    <div class="panel chart"><h3>Business adoption is climbing steadily, not explosively: one firm in four</h3><p class="sub">Share of US firms using AI in any business function, %</p><div class="fig" id="ch-btos"></div><p class="cite">Source: Census Bureau <a href="https://www.census.gov/hfp/btos/downloads/National.xlsx">Business Trends and Outlook Survey</a>. The question was reworded in Nov 2025, so earlier values (3.8% in late 2023) are not comparable.</p></div>
+  </div>
+  <div class="sec">
+    <div class="sec-head"><h2 class="h2">The reading sheet: where each question stands today</h2><p>Select a row to open the full breakdown on the decision map.</p></div>
+    <div class="panel scroll" style="padding:4px 8px"><table class="sheet" id="sheet"><thead><tr><th>Question</th><th>Latest reading</th><th>Numbers point to</th><th>Source</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="sec" id="worlds-table">
+    <div class="sec-head"><h2 class="h2">Where these numbers could lead: the seven worlds</h2><p>Rough end-states for each world, mostly around 2035, anchored to published estimates where they exist. Figures marked 2050 come from 2050 scenarios, and "toward zero" says where a trend is heading, not a 2035 level. Treat them as orders of magnitude for comparison, not forecasts.</p></div>
+    <div class="panel scroll" style="padding:4px 10px"><table class="wt" id="wt"></table></div>
+    <p class="small" id="wrob" style="color:var(--ink2);max-width:80ch;margin:12px 0 0"></p>
+    <details style="margin-top:14px"><summary>Where these ranges come from</summary><div id="anchors"></div></details>
+  </div>
+</section>
+
+<section class="view" id="v-map">
+  <h1 class="h1">Fourteen questions decide which AI future we get. Where does each one stand today?</h1>
+  <p class="lede">Each card is an open question with two or three possible answers, and arrows show which questions shape which. Select a card to see the numbers that bear on it, what each answer would look like in the data, and which way today's numbers lean.</p>  <div class="map-layout">
+    <div><div class="map" id="mapbox"><svg class="edges" id="edges" aria-hidden="true"></svg></div>
+    <p class="small muted" style="margin-top:8px">The coloured answer on each card is where today's numbers lean. Arrows run from cause to effect; dashed arrows feed back to an earlier layer. Hover a card to trace its links, or see them listed under each question.</p></div>
+    <aside class="panel detail" id="detail" aria-live="polite"></aside>
+  </div>
+</section>
+
+<section class="view" id="v-paths" hidden>
+  <h2 class="h2">Path builder</h2>
+  <p class="lede">Pick a branch for each question, or load today's readings to see which world the current numbers resemble. A small dot marks the branch today's numbers point to.</p>
+  <div class="pb">
+    <div><div class="chips" id="presets" style="margin-bottom:16px"></div><div id="pb-groups"></div></div>
+    <aside class="panel res" id="res"></aside>
+  </div>
+</section>
+
+
+<section class="view" id="v-sources" hidden>
+  <h2 class="h2">Data sources you can jump to</h2>
+  <p class="lede">The datasets behind every reading, grouped by layer, with how often they update. Most are free and downloadable.</p>
+  <div class="panel scroll" style="margin-top:18px;padding:4px 10px"><table class="srct" id="srct"></table></div>
+  <div class="sec"><div class="sec-head"><h2 class="h2">Numbers nobody publishes yet</h2><p>The gaps where this framework is guessing. Each is a chance for original work.</p></div><div class="gap-list" id="gaps"></div></div>
+</section>
+</main>
+<footer>Readings collected 25 Nov 2026 from the linked sources. Lab revenue for OpenAI, some incident details and a few market shares come from press or independent analysis, and are marked where shown. Where the numbers lean, and the world ranges, are judgments for structured disagreement, not predictions.</footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const A=(l,u)=>`<a href="${u}">${l}</a>`;
+const LAYERS=[{id:"tech",name:"Technology",sub:"What AI can do"},{id:"econ",name:"Economy",sub:"Growth, money and work"},{id:"safe",name:"Safety",sub:"Whether we can trust it"},{id:"power",name:"Power",sub:"Who decides and who gains"}];
+const CONF={1:"low confidence",2:"medium confidence",3:"high confidence"};
+
+const NODES=[
+{id:"generalise",code:"T1",layer:"tech",name:"Generalisation",q:"Do AI's gains on checkable tasks spread to messy, long, judgment-heavy work?",
+ branches:[["jagged","Jagged","Stays jagged"],["broad","Broad","Generalises broadly"]],shapes:["recursion","robots","weaklinks","diffusion","newwork"],
+ head:["35%","of 4 to 8 hour research tasks OpenAI's agents now finish with no human help, up from 13% in March"],
+ thr:{jagged:"The 80% horizon stays under a working day through 2028, unassisted success on long tasks plateaus below about half, and usage outside software stays thin.",broad:"The 80% horizon passes 8 hours, unassisted success on 4–8 hour tasks tops about 80%, and usage data shows real automation in law, management and clinical work."},
+ experts:`Forecasters surveyed by FRI put an 8-hour task at 80% reliability in 2030 (experts) or 2028 (superforecasters), and expected about 3.4 hours by end-2026. Mythos Preview reached 3 hours in April, so progress is running ahead of expert expectations (${A("FRI LEAP","https://forecastingresearch.substack.com/p/leap-wave-8-ai-timelines")}).`,
+ lean:["broad",1,"On trend, yes. If the 80% horizon (3h 06m) keeps the four-month doubling METR measures for the 50% figure, it passes 8 hours in about six months, and unassisted success on long research tasks nearly tripled this year. But neither threshold is met yet, and both measures cover software and research tasks with answer keys. The messy, judgment-heavy work this question is about is still unmeasured, so confidence is low."],
+ why:"A 50% horizon means the model succeeds half the time on tasks of that length; real jobs need 80% to 99%. That is why the 80% figure, and unassisted success on real research tasks, are better gauges than headline benchmarks. Most famous benchmarks (GPQA, FrontierMath Tier 4, ARC-AGI-2) are now saturated, so the useful signal has moved to newer tests and to labs' own measurements."},
+{id:"recursion",code:"T2",layer:"tech",name:"Recursive improvement",q:"Once AI can do AI research, does progress compound?",
+ branches:[["fizzle","Steady","Steady trend"],["accel","Accelerates","Strong acceleration"],["sie","Explodes","Intelligence explosion"]],shapes:["verify","warning","concentration","geopolitics"],
+ head:["26%","of Anthropic's AI research work is led by Claude (Aug 2026), up from under 1% in February"],
+ thr:{fizzle:"Reported research speed-up stays under about 2x and the gap between frontier generations does not shrink.",accel:"Speed-up of roughly 2x to 10x, new frontier models every few months, people still setting the research agenda.",sie:"AI-led share near 100%, speed-up well above 10x, and five or more orders of magnitude of effective compute gained within a year."},
+ experts:`AI Futures Project medians for a superhuman AI researcher: May 2027 (Kokotajlo) and Aug 2027 (Lifland) (${A("AIFP, Nov 2026","https://blog.aifutures.org/p/q35-timelines-update-looks-like-the")}). Metaculus community median for AGI: 29 Nov 2031 (${A("Metaculus","https://www.metaculus.com/questions/5121/date-of-artificial-general-intelligence/")}). Forethought estimates the returns to AI software research at roughly 0.5 to 2; an explosion needs them above 1, so the evidence is consistent with either outcome (${A("Forethought","https://forethought.org/research/will-ai-r-and-d-automation-cause-a-software-intelligence-explosion")}).`,
+ lean:["accel",2,"A roughly 3x staff-estimated uplift and a fast-rising AI-led share fit strong acceleration. Nothing yet shows a self-sustaining runaway."],
+ why:"Uplift is how much faster researchers work with AI than without. An explosion needs each round of AI-made progress to yield more than it costs, which economists write as returns r above 1. Labs' self-reports are the only data here, so treat them as upper-bound evidence."},
+{id:"compute",code:"T3",layer:"tech",name:"Compute and energy",q:"Can chips, power and money keep frontier compute growing about 5x a year?",
+ branches:[["scales","Scales","Keeps scaling"],["wall","Hits a wall","Hits a wall by 2030"]],shapes:["generalise","recursion","concentration"],
+ head:["9.4×10²⁶","FLOP for the largest known training run (GPT-6 Astra, Sep 2026)"],
+ thr:{scales:"Compute keeps growing 4–5x a year to 2030 and multi-gigawatt campuses switch on roughly on schedule.",wall:"Gigawatts energised fall behind announcements, grid auctions stay short, and compute growth drops below about 2.5x a year."},
+ experts:`Epoch: about $38B of capex per gigawatt and about 2.1 years to build one (${A("Epoch trends","https://epoch.ai/trends")}). The US Energy Department's lab put data centres at 6.7–12% of US electricity by 2028 (${A("LBNL","https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers")}).`,
+ lean:["scales",2,"Compute is still growing about 5x a year. Power is the visible strain: the grid operator for 13 states fell 6.8 GW short of its reliability target. Scaling also depends on the financing question staying on track, which is itself only medium confidence."],
+ why:"FLOP counts the arithmetic used to train a model; every order of magnitude has bought a visible capability jump. H100e (H100-equivalents) is Epoch's common unit for counting chips of different types."},
+{id:"robots",code:"T4",layer:"tech",name:"Robotics",q:"When is a robot-hour cheaper than a human-hour for everyday physical work?",
+ branches:[["early","Early 2030s","Crossover in the early 2030s"],["late","After 2040","Crossover after 2040"]],shapes:["weaklinks","newwork"],
+ head:["~19,100","humanoid robots shipped worldwide in H1 2026, against 5 million industrial robots in service"],
+ thr:{early:"Robot cost per hour falls below median wages for common tasks by about 2032, shipments reach millions a year, and robots work at scale outside factories.",late:"Shipments stay in the tens of thousands and robots stay in structured settings like warehouses."},
+ experts:`IFR forecasts 806k industrial installations a year by 2029 (${A("IFR","https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally")}). There is no credible public forecast of the robot-human cost crossover.`,
+ lean:["late",1,"Prices are falling fast and a leased robot already costs about a warehouse wage per hour on paper, but shipments are tiny and mostly pilots. Too early to call."],
+ why:"Robotics decides whether physical work stays a human refuge. The key missing number is cost per completed task, not list price: a robot that is slower or needs supervision costs more per task than its hourly rate suggests."},
+{id:"capital",code:"E1",layer:"econ",name:"Financing",q:"Does AI revenue grow fast enough to keep paying for the build-out?",
+ branches:[["sustained","Keeps up","Revenue keeps up"],["correction","Boom and bust","Boom and bust"]],shapes:["compute","concentration","diffusion"],
+ head:["$202B","of big-tech capex in Q3 2026, more than its $176B of operating cash flow"],
+ thr:{sustained:"Lab revenue keeps growing over 2x a year, free cash flow recovers in 2028 as projected, and credit spreads stay calm.",correction:"Capex guidance is cut, revenue growth falls below about 1.5x a year, and spreads on AI-linked debt widen."},
+ experts:`Epoch measured capex growing about 70% a year against operating cash flow at about 23%, for five firms including Oracle, up to Q1 2026 (${A("Epoch","https://epoch.ai/data-insights/hyperscaler-capex-vs-cash-flow")}). The Congressional Research Service maps circular deals such as Nvidia's $100B pledge to OpenAI (${A("CRS","https://www.everycrsreport.com/files/2026-11-16_IF13349_f02f54cd07d1d5b4ea1e94fd7b0cc89daa30e9d7.pdf")}).`,
+ lean:["sustained",2,"Lab revenue is growing far faster than 2x a year, the main test for this answer, so the build-out is not yet a pure bet. But Anthropic and OpenAI together take in about an eighth of what big tech spends on capex each quarter, and the gap is now debt-funded: the classic setup for a boom and bust if growth slows."],
+ why:"Operating cash flow is the cash a business generates before investing. When capex exceeds it, the gap is filled by borrowing, which spreads the risk from a few rich firms to bond and credit investors."},
+{id:"weaklinks",code:"E2",layer:"econ",name:"Weak links",q:"Do the tasks AI cannot do hold the whole economy back?",
+ branches:[["bind","Bind","Bottlenecks bind"],["dissolve","Dissolve","Bottlenecks dissolve"]],shapes:["newwork","ownership"],
+ head:["−3.4% vs +5.7%","consulting prices against industrial construction prices, year on year"],
+ thr:{bind:"AI-exposed services keep getting cheaper while care, repair and construction take a growing share of total spending, and productivity growth settles near 2%.",dissolve:"Care, repair and construction prices start falling too, their share of spending stops rising, and productivity growth holds above about 4% a year."},
+ experts:`The substitution elasticity σ is the crux: Jones and Tonetti calibrate 0.2, Epoch's GATE about 0.6, explosive growth needs about 1 (${A("Jones–Tonetti","https://web.stanford.edu/~chadj/JonesTonetti_Automation.pdf")}).`,
+ lean:["bind",1,"An early, mixed sign. Consulting and software prices are falling while construction and hospital prices rise, but a gap like that appears under both answers. What separates them is whether the slow sectors take a growing share of spending, which this page does not track yet. Legal prices, up 6.3%, also cut against a broad fall in the prices of AI-exposed services."],
+ why:"If AI makes some services cheap, their prices fall relative to work AI cannot do. That gap opens whether or not the bottlenecks bind, so on its own it settles nothing. The test is spending. If people keep buying roughly the same amount of care, repair and construction even as they get relatively dearer, those sectors take a growing share of total spending and cap how fast the whole economy can grow (the Baumol effect). If their share holds flat or falls, the bottleneck is dissolving."},
+{id:"diffusion",code:"E3",layer:"econ",name:"Diffusion",q:"How fast do firms, governments and households actually adopt AI?",
+ branches:[["fast","Fast","Fast everywhere"],["split","Split","Split economy"],["slow","Slow","Takes decades"]],shapes:["newwork","warning","ownership"],
+ head:["25.0%","of US firms use AI, up from 17.3% a year earlier"],
+ thr:{fast:"Firm adoption passes about 50% by 2028 and time saved passes about 10% of work hours.",split:"Information and finance pass 50% while health, education and government stay low.",slow:"Firm adoption rises 5 points a year or less."},
+ experts:`The Census question was broadened in Nov 2025 to cover any business function, which started a new series (${A("Census note","https://www.census.gov/hfp/btos/downloads/AI%20Question%20Wording%20Updates.pdf")}). Since Oct 2026 it also says "Super Intelligence (SI), formerly AI", which may shift answers slightly.`,
+ lean:["split",2,"At 7.7 points a year, firm adoption reaches about 40% by the end of 2028: faster than the slow branch allows, short of the 50% the fast branch needs. Information firms are already near 40% while retail is near 14%, which is the split branch's signature."],
+ why:"Adoption is measured badly: surveys range from 25% of firms to about 78% of employment at AI-using firms, depending on the question. Hours saved is the more economic measure, and at about 2% it is still small."},
+{id:"newwork",code:"E4",layer:"econ",name:"New human work",q:"Does new work appear as fast as old work disappears?",
+ branches:[["thick","Keeps pace","New work keeps pace"],["thin","Shrinks","Human work shrinks"]],shapes:["ownership","agency"],
+ head:["−19%","employment of 22–25 year olds in the most AI-exposed jobs, against the counterfactual"],
+ thr:{thick:"The youth gap stops widening, unemployment stays at 4–5%, and new job titles show up in occupational data.",thin:"The youth gap spreads to over-30s, participation falls, and the labour share keeps dropping."},
+ experts:`Economists surveyed with the Chicago Fed expect US labour force participation of 61.0% in 2030 (from 61.9% now), falling to 55% by 2050 in their rapid-AI scenario (${A("Chicago Fed WP 2026-07","https://www.chicagofed.org/publications/working-papers/2026/2026-07")}). Yale's tracker still finds no link between AI use and unemployment (${A("Yale Budget Lab","https://budgetlab.yale.edu/research/tracking-impact-ai-labor-market")}).`,
+ lean:["thick",1,"In aggregate, work is holding up. At the entry level it is shrinking. Both are true at once, which is why this question stays open."],
+ why:"Displacement shows up first as missing hires, not layoffs, so the unemployment rate is a late signal. Watch young workers in exposed jobs, participation and the labour share instead."},
+{id:"verify",code:"S1",layer:"safe",name:"Alignment verification",q:"Can we check that advanced AI is doing what we intend?",
+ branches:[["verified","Verifiable","Verifiable"],["lucky","Unverified","Unverified but benign"],["fails","Hidden flaws","Hidden misalignment"]],shapes:["warning","agency"],
+ head:["up to 36%","of test transcripts where Claude Opus 5.5 internally suspects it is being evaluated"],
+ thr:{verified:"Interpretability audits catch deliberately planted flaws in blind tests, and evaluation awareness stops rising.",lucky:"Measured misbehaviour keeps falling while awareness rises, with no proof either way.",fails:"A deployed model is confirmed to have deceived or sabotaged in real use."},
+ experts:`Anthropic moved its catastrophic-risk rating for Mythos 5.1 to "low rather than very low" (${A("system card","https://assets.claude.com/0339e6a7c5c7b87f5c07798616dc32c215d14235.pdf")}).`,
+ lean:["lucky",2,"Measured misbehaviour is falling, but models increasingly notice tests, which weakens what those measurements prove."],
+ why:"A model that behaves well only when watched passes every behavioural test. That is why rising evaluation awareness matters more than falling misbehaviour rates, and why interpretability (looking inside the model) is the main hope for verification."},
+{id:"warning",code:"S2",layer:"safe",name:"Warning shots",q:"Does the first serious failure come early and clearly enough to teach us?",
+ branches:[["early","Early","Early and recoverable"],["none","None","No clear signal"],["catastrophic","Severe","Severe first failure"]],shapes:["geopolitics","concentration","agency"],
+ head:["2","autonomous AI cyber incidents publicly reported in 2026"],
+ thr:{early:"Bounded, attributable incidents are followed by new rules or agreements.",none:"No incidents are reported despite rising capability.",catastrophic:"A first major failure causes large-scale harm."},
+ experts:`Steptoe's November tracker lists no federal AI law enacted since May 2025 (${A("Steptoe tracker","https://www.steptoe.com/a/web/u3UBoABYv2v3ehpGebnt9q/steptoe-federal-ai-legislative-tracker_november-2026.pdf")}), so the warning shots have not yet produced a federal policy response.`,
+ lean:["early",2,"Bounded warning shots are happening. Whether they teach anything depends on the response, which so far is small."],
+ why:"Societies usually act after visible harm. A moderate, clearly attributed incident can unlock rules that were impossible before; one blamed on a rival tends to escalate a race instead."},
+{id:"concentration",code:"P1",layer:"power",name:"Concentration",q:"How many hands control frontier AI?",
+ branches:[["concentrated","Few hands","Few hands"],["diffuse","Many hands","Many hands"]],shapes:["geopolitics","ownership","agency","verify"],
+ head:["71% vs 75%","of AI compute held by five hyperscalers, against Chinese open models' share of OpenRouter tokens"],
+ thr:{concentrated:"The open-model lag widens past a year and the top firms' compute share keeps rising.",diffuse:"The open-model lag closes to weeks and frontier capability spreads across many labs and countries."},
+ experts:`Every model at Epoch's capability frontier since 2023 has been American (${A("Epoch","https://epoch.ai/data-insights/us-vs-china-eci")}).`,
+ lean:["concentrated",2,"Split: compute and the frontier are concentrating, while everyday usage is diffusing to cheap open models. The money still follows the closed frontier."],
+ why:"Tokens measure usage and spend measures value. Open models carry most tokens but a quarter of spend, which is the commoditisation story from The Commanding Heights in two numbers."},
+{id:"geopolitics",code:"P2",layer:"power",name:"US–China",q:"Do the US and China race, deter or cooperate?",
+ branches:[["race","Race","Unconstrained race"],["rivalry","Rivalry","Managed rivalry"],["coop","Cooperate","Cooperation regime"]],shapes:["verify","compute"],
+ head:["<4%","Huawei's AI compute output as a share of Nvidia's in 2026"],
+ thr:{race:"The dialogue collapses, export controls extend to models, or a Taiwan crisis erupts.",rivalry:"Channels exist and chips stay controlled, but nothing is verified.",coop:"An agreement verifies training runs or paces automated AI research."},
+ experts:`Whether the dialogue becomes a regular channel is still open; Brookings held a session on what comes next on 23 Nov (${A("Brookings","https://www.brookings.edu/events/what-is-next-for-the-us-china-ai-safety-dialogue/")}).`,
+ lean:["rivalry",2,"Hotlines and a dialogue exist alongside chip controls and a widening compute gap: managed rivalry."],
+ why:"Race intensity sets how much safety margin either side can afford. Nvidia is making about 26 times Huawei's output this year, and the US holds about 7 times China's installed AI compute. A lead that size means the US could slow down without losing it, which is the opening for a deal."},
+{id:"ownership",code:"P3",layer:"power",name:"Ownership of gains",q:"Who owns the gains when machines do more of the work?",
+ branches:[["broad","Broad","Broad ownership"],["narrow","Narrow","Narrow ownership"]],shapes:["agency"],
+ head:["93.1","workers' share of nonfinancial corporate income (2017 = 100), down 2.8% in a year"],
+ thr:{broad:"Real pay per hour grows as fast as productivity for several years, the workers' share recovers once the investment boom cools, and AI gains reach households through dividends, funds or transfers.",narrow:"Productivity beats real pay by a point or more a year for several years, and the workers' share keeps falling even through the next downturn, when it normally rises."},
+ experts:`Economists' rapid-AI scenario puts the top 10% at 80% of wealth by 2050, against 75% in their central case (${A("Chicago Fed WP 2026-07","https://www.chicagofed.org/publications/working-papers/2026/2026-07")}).`,
+ lean:["narrow",2,"Workers' share of nonfinancial corporate income fell 2.8% in a year, profits rose 30%, and the economy-wide share hit its lowest since 1947. Part of that is the usual boom pattern, so the real test is whether it recovers."],
+ why:"Workers' share of income moves with the gap between two growth rates: output per hour and pay per hour, both measured in the same prices. If pay keeps up, the share holds; if output pulls ahead, the extra goes to owners. The familiar comparison of output per hour with real pay per hour overstates the gap, because real pay is deflated by consumer prices and output by business prices, and the two have moved differently. Two cautions. The share has been falling since about 2000, long before AI, and it usually dips in booms (profits rise first) and recovers in downturns. So one record low proves little; a share that keeps falling through the next downturn while productivity stays high would. The nonfinancial corporate version is the cleaner gauge because it needs no estimate of how much self-employed income counts as pay."},
+{id:"agency",code:"P4",layer:"power",name:"Human agency",q:"Do people stay meaningfully in charge of consequential decisions?",
+ branches:[["meaningful","Meaningful","Meaningful control"],["nominal","Nominal","Nominal oversight"],["delegated","Delegated","Full delegation"]],shapes:["diffusion"],
+ head:["0%","of Anthropic's AI research work done fully autonomously, with about 30,000 agents running at once"],
+ thr:{meaningful:"Law requires an accountable person for consequential decisions, and measured human review stays real.",nominal:"People sign off on volumes they cannot review.",delegated:"Agents run operations end to end with no review."},
+ experts:`No public dataset measures how often AI decisions get genuine human review; this is one of the framework's biggest gaps.`,
+ lean:["nominal",1,"Humans are still in every loop on paper, but one person now supervises many agents, and nobody measures how real that review is."],
+ why:"Oversight can become a signature on work nobody can check. The useful number would be the share of consequential decisions that get informed human review, and no one collects it yet."}
+];
+const U={metr:"https://metr.org/time-horizons/",metrb:"https://metr.org/blog/2026-01-29-time-horizon-1-1/",oaij:"https://openai.com/index/research-acceleration-jagged-frontier/",arc:"https://arcprize.org/leaderboard",hle:"https://labs.scale.com/leaderboard/humanitys_last_exam",aei:"https://www.anthropic.com/research/economic-index-march-2026-report",pace:"https://www.anthropic.com/institute/measuring-pace-of-ai-development",rsi:"https://www.anthropic.com/institute/recursive-self-improvement",fable:"https://www.anthropic.com/claude-fable-and-mythos-5-2",g62:"https://openai.com/index/introducing-gpt-6-2-astra-sol",algo:"https://epoch.ai/gradient-updates/the-least-understood-driver-of-ai-progress",trends:"https://epoch.ai/trends",models:"https://epoch.ai/data/all_ai_models.csv",adds:"https://epoch.ai/data-insights/ai-computing-capacity-additions-doubling",dc:"https://epoch.ai/graphs/largest-ai-data-centers-by-power-capacity",bnef:"https://about.bnef.com/insights/data-centers/six-things-to-know-about-bnefs-new-us-data-center-capacity-outlook/",pjm:"https://insidelines.pjm.com/pjm-capacity-auction-procures-138318-mw-of-generation-resources-as-work-continues-to-address-growing-electricity-demand/",ifr:"https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally",ifrd:"https://ifr.org/news/robot-density-highest-in-south-korea-singapore-and-germany/",hum:"https://techrepublic.com/article/news-humanoid-robot-shipments-chinese-vendors",tarft:"https://theresarobotforthat.com/wp-content/uploads/2026/09/TARFT-Verified-Price-Deployment-Table-2026-09.pdf",sec:"https://data.sec.gov/api/xbrl/companyconcept/CIK0001652044/us-gaap/PaymentsToAcquirePropertyPlantAndEquipment.json",cvc:"https://epoch.ai/data-insights/hyperscaler-capex-vs-cash-flow",ocf:"https://data.sec.gov/api/xbrl/companyconcept/CIK0000789019/us-gaap/NetCashProvidedByUsedInOperatingActivities.json",ant:"https://www.sec.gov/Archives/edgar/data/2130357/000162828026074944/anthropicpbc-424b4.htm",oair:"https://news.bloombergtax.com/private-equity/openai-third-quarter-revenue-soars-nearly-50-to-10-billion",bonds:"https://finimize.com/content/big-techs-ai-bond-binge-pushed-us-issuance-to-a-record",debt:"https://www.bisnow.com/news/national/data-center-capital-markets/these-15-companies-leading-trillion-dollar-data-center-lending-boom",crs:"https://www.everycrsreport.com/files/2026-11-16_IF13349_f02f54cd07d1d5b4ea1e94fd7b0cc89daa30e9d7.pdf",fred:s=>"https://fred.stlouisfed.org/series/"+s,bls:"https://www.dol.gov/newsroom/economicdata/prod2_11052026.pdf",btos:"https://www.census.gov/hfp/btos/downloads/National.xlsx",cst:"https://census.gov/library/stories/2026/05/ai-use-businesses.html",can:"https://digitaleconomy.stanford.edu/news/canariesaug26/",nyf:"https://www.newyorkfed.org/research/college-labor-market",chal:"https://www.challengergray.com/blog/october-layoffs-at-three-year-low-seasonal-hiring-plans-up-26/",plfs:"https://www.mospi.gov.in/uploads/latestReleases/latest_release_1794821636269_817c2262-e357-4db4-924d-486d18de277b_Monthly_Press_note_PLFS_Oct_2026.pdf",o55:"https://assets.claude.com/fc1b44717c85dc068bc6ba5024219938094694bd.pdf",myp:"https://assets.claude.com/08ab9158070959f88f296514c21b7facce6f52bc.pdf",m51:"https://assets.claude.com/0339e6a7c5c7b87f5c07798616dc32c215d14235.pdf",sch:"https://openai.com/index/detecting-and-reducing-scheming-in-ai-models/",blk:"https://www.anthropic.com/research/agentic-misalignment",aisit:"https://aisi.gov.uk/frontier-ai-trends-report",aisic:"https://aisi.gov.uk/blog/how-fast-is-autonomous-ai-cyber-capability-advancing",hf:"https://openai.com/index/hugging-face-model-evaluation-security-incident",tw:"https://www.secureworld.io/industry-news/first-fully-autonomous-ai-cyber-attack-government",step:"https://www.steptoe.com/a/web/u3UBoABYv2v3ehpGebnt9q/steptoe-federal-ai-legislative-tracker_november-2026.pdf",state:"https://techpolicy.press/where-state-ai-legislation-stands-half-way-into-2026",gal:"https://news.gallup.com/poll/712751/americans-cool-toward-ai.aspx",hyp:"https://epoch.ai/data-insights/hyperscalers-control-most-compute",imp:"https://epoch.ai/latest/introducing-the-ai-chip-imports-explorer",open:"https://epoch.ai/data-insights/open-closed-eci-gap",dos:"https://ryandoser.com/research/chinese-ai-models/",orr:"https://openrouter.ai/zh-CN/data/october-2026",hua:"https://epoch.ai/publications/huaweis-roadmap-to-2031",usc:"https://epoch.ai/data-insights/us-vs-china-eci",tnw:"https://thenextweb.com/news/us-china-super-intelligence-dialogue-ai-incident-channel",h200:"https://bdnews24.com/business/pyentjtvr9",mof:"https://chinatalk.media/p/mofcoms-new-ai-rules",ls:"https://www.advisorperspectives.com/articles/2026/11/05/us-labor-productivity-increases-fastest-pace",cfr:"https://www.cfr.org/articles/washingtons-growing-portfolio-tracking-u-s-government-investments"};
+const EV={
+generalise:[
+ {h:"How long can AI work on its own?",t:"METR times software tasks by how long they take a skilled person, then finds the longest task a model can finish. Longer tasks mean a bigger slice of a real job. The catch is reliability: a job needs the 80% figure, not the 50% one.",m:[["17h 25m","longest task Mythos Preview finishes half the time. METR's interval runs from about 8.5 to 55 hours, and it calls readings above 16 hours unreliable","Apr 2026","METR",U.metr],["3h 06m","longest task it finishes 80% of the time (interval about 1.6 to 6.6 hours)","Apr 2026","METR",U.metr],["~4.2 months","doubling time of the 50% figure since 2023 (129 days; interval 104 to 158)","2026","METR data file","https://metr.org/assets/benchmark_results_1_1.yaml"]]},
+ {h:"Does that hold on real research, not test suites?",t:"OpenAI tracks how often its agents finish internal research tasks without a person stepping in. That is closer to messy real work than any benchmark, and it rose sharply this year.",m:[["13% → 35%","of 4 to 8 hour tasks finished with no human help","Mar → Oct 2026","OpenAI",U.oaij],["23% → 46%","of 2 to 4 hour tasks","Mar → Oct 2026","OpenAI",U.oaij]]},
+ {h:"Can it handle problems it has never seen?",t:"ARC-AGI-3 drops models into new game-like puzzles; Humanity's Last Exam asks expert questions across fields. Both test transfer rather than memory.",m:[["81.2%","on ARC-AGI-3, where people score 100%","Nov 2026","ARC Prize",U.arc],["54.8%","on Humanity's Last Exam without tools","2026","Scale",U.hle]]},
+ {h:"Is it spreading beyond code?",t:"Usage data shows whether people outside software are handing real tasks over.",m:[["49%","of occupations have had at least a quarter of their tasks show up in Claude usage so far (a cumulative count of occupations, not a share of workers)","Mar 2026","Anthropic",U.aei]]}],
+recursion:[
+ {h:"How much AI research is AI already doing?",t:"If AI does a growing share of the work that improves AI, each model helps build the next one faster. That is the loop this question is about.",m:[["26%","of Anthropic's AI research led by Claude, up from under 1% in February","Aug 2026","Anthropic",U.pace],["0%","done fully on its own; Claude works alongside people on over 90%","Aug 2026","Anthropic",U.pace],["over 90%","of changes to Anthropic's core code written by Claude","Nov 2026","Anthropic",U.fable]]},
+ {h:"How much faster are researchers going?",t:"Uplift is the speed-up a researcher gets from AI help. Around 3x today; an explosion needs something closer to 10x or more, sustained.",m:[["~3x","OpenAI staff survey (101 people, self-reported): a month's work would take a median of three months without agents","Aug–Sep 2026","OpenAI",U.oaij],["~4x","uplift Anthropic researchers report for themselves","2026","Anthropic",U.rsi],["0.5 → 5.7","agent-workdays each OpenAI researcher runs per day","2026","OpenAI",U.oaij]]},
+ {h:"Are the labs flagging it?",t:"OpenAI's safety framework has a High threshold for models that can meaningfully speed up AI research. Crossing it is the lab's own signal that the loop has started.",m:[["First","released model to meet that threshold: GPT-6.2 Astra","17 Nov 2026","OpenAI",U.g62]]},
+ {h:"Is the software side compounding?",t:"Better methods get more out of the same chips. If this rate climbs as AI takes over research, the loop is real.",m:[["~3x to ~10x","a year in algorithmic efficiency; plausible range 2x to 50x","2024–26","Epoch",U.algo]]}],
+compute:[
+ {h:"Is training compute still growing?",t:"Each tenfold jump in compute used to train a model has bought a visible jump in capability, so this is the engine behind most of the other trends.",m:[["~5x","a year growth in frontier training compute","2020–26","Epoch",U.trends],["9.4×10²⁶","FLOP for the largest known run, GPT-6 Astra","Sep 2026","Epoch",U.models],["0.8M → 6.3M","AI chips (H100-equivalents) added each quarter","2024 → 2026","Epoch",U.adds]]},
+ {h:"Can the power grid keep up?",t:"Chips need electricity, and power plants and grid links take years to build. This is where a wall would appear first.",m:[["~1 GW","largest AI campus running today; 2.26 GW planned for 2028","Nov 2026","Epoch",U.dc],["5.9%","of US electricity used by data centres; about 20% by 2035","2026","BNEF",U.bnef],["6.8 GW","shortfall in the largest US grid's capacity auction, cleared at the price cap","Jul 2026","PJM",U.pjm]]},
+ {h:"What does each step cost?",t:"A gigawatt campus is roughly a mid-sized city's demand, and it takes years and tens of billions to build.",m:[["~$38B","of capex per gigawatt, built in about 2.1 years","2026","Epoch",U.trends]]}],
+robots:[
+ {h:"How many robots are there?",t:"Factory robots are a mature industry. Humanoids, which could do general physical work, are still at the pilot stage.",m:[["5M","industrial robots at work; 600k+ installed in 2025, 59% of them in China","2025","IFR",U.ifr],["~19,100","humanoids shipped, up 272%; about 60k expected for 2026","H1 2026","TechRepublic",U.hum]]},
+ {h:"How cheap are they getting?",t:"The crossover this question asks about is cost per hour against wages. List prices have fallen into car territory; cost per finished task is not measured.",m:[["$5.9k–$29.9k","list prices of Unitree humanoids (third-party price table, low confidence)","Sep 2026","TARFT",U.tarft],["~$12–18","per hour for a leased Agility Digit run 16 to 24 hours a day (our arithmetic)","2026","TARFT",U.tarft]]},
+ {h:"How far does automation already go?",t:"Robot density shows how much factory work is automated where it pays off.",m:[["1,066 vs 323","robots per 10,000 factory workers, Korea against the US (world 152)","2025","IFR",U.ifrd]]}],
+capital:[
+ {h:"How much is being spent?",t:"The four largest cloud companies are building at a pace with no peacetime precedent, and now spend more than their businesses bring in.",m:[["$201.9B","capex in one quarter, twice a year earlier","Q3 2026","SEC filings",U.sec],["$175.5B","their operating cash flow in the same quarter","Q3 2026","SEC filings",U.ocf]]},
+ {h:"Is revenue catching up?",t:"The spending only pays off if customers pay for AI fast enough. Revenue is growing faster than almost any business in history, but margins are thin because compute is so expensive.",m:[["~13%","Anthropic and OpenAI's combined revenue as a share of big-tech capex in the same quarter ($27B against $202B). Our arithmetic; it leaves out the cloud companies' own AI revenue, and the OpenAI figure is a press report","Q3 2026","Prospectus and filings",U.ant],["~$81B","Anthropic's annual revenue run-rate, from about $9B a year earlier","Oct 2026","Prospectus",U.ant],["58%","of Anthropic's revenue spent on compute; adjusted operating margin 15%","Q3 2026","Prospectus",U.ant],["~$10B","OpenAI quarterly revenue (press report, not a filing)","Q3 2026","Bloomberg Tax",U.oair]]},
+ {h:"How is the gap being filled?",t:"When cash flow falls short, firms borrow. That spreads the risk from a few rich companies to bond and credit markets, which is how a slowdown turns into a bust.",m:[["$370.7B","of hyperscaler bonds this year, against $121B in 2025","2026","Finimize",U.bonds],["$1.3T+","of debt on US data centres","2026","Bisnow",U.debt],["$100B","Nvidia's pledge to OpenAI, one of several circular deals","2026","CRS",U.crs]]}],
+weaklinks:[
+ {h:"Is AI-exposed work getting cheaper?",t:"If AI makes some kinds of work cheap, their prices should fall relative to everything else.",m:[["−3.4%","management consulting prices","Oct 2026, y/y","FRED",U.fred("PCU541610541610")],["−5.6%","software publishers' prices","Oct 2026, y/y","FRED",U.fred("PCU511210511210")]]},
+ {h:"Is hard-to-automate work getting dearer?",t:"Weak links predict the opposite for physical and personal work: it becomes the expensive part of the economy, and caps how much richer we get (the Baumol effect). The two consumer-price figures are for September, because no October 2025 values were published to compare against.",m:[["+5.7%","industrial building construction prices","Oct 2026, y/y","FRED",U.fred("PCU236211236211")],["+5.4%","hospital services","Sep 2026, y/y","FRED",U.fred("CUUR0000SEMD")],["+3.7%","all consumer prices, for comparison","Sep 2026, y/y","FRED",U.fred("CPIAUCSL")]]},
+ {h:"An exception that cuts the other way",t:"Law is among the most AI-exposed services, yet its prices are rising fastest. Licensing may be holding them up, or AI may not be cutting legal costs yet. Either way it is evidence against a broad fall in AI-exposed prices.",m:[["+6.3%","law office prices","Oct 2026, y/y","FRED",U.fred("PCU541110541110")]]},
+ {h:"Is it showing up in growth?",t:"If weak links bind, productivity rises for a while and then levels off near its old pace.",m:[["+2.1%","output per hour over the past year (3.6% annualised in Q3)","Q3 2026","BLS",U.bls]]}],
+diffusion:[
+ {h:"How many firms use AI?",t:"Steady rather than explosive so far, which fits the slow, bureaucratic adoption you would expect inside companies.",m:[["25.0%","of US firms, from 17.3% a year earlier","Nov 2026","Census",U.btos],["28.2%","expect to within six months","Nov 2026","Census",U.btos]]},
+ {h:"How deep does it go?",t:"Use is wide but shallow: many people try it at work, but it saves only a small share of total hours.",m:[["40.5%","of employed adults use generative AI for work, down from 45.2% in Q2 but up from 37.4% a year earlier","Q3 2026","FRED",U.fred("RPSGENAIUSAGESHAREWORK")],["2.1%","of all work hours saved","Q3 2026","FRED",U.fred("RPSGENAITSALL")]]},
+ {h:"Is it uneven?",t:"A split economy shows up as wide gaps between sectors.",m:[["39.7% vs ~14%","of firms using AI, information sector against retail","May 2026","Census",U.cst]]},
+ {h:"Is it changing headcount yet?",t:"Among firms that use AI, more say it led them to hire than to cut.",m:[["7.3% vs 2.4%","of AI-using firms that added vs cut staff because of AI","Nov 2026","Census",U.btos]]}],
+newwork:[
+ {h:"Are entry-level jobs disappearing?",t:"AI shows up first as hiring that never happens, not layoffs: firms take on fewer juniors for work AI can now do. That is why the unemployment rate misses it.",m:[["−19%","employment of 22–25 year olds in the most exposed jobs, against the trend; no gap for older workers","Jun 2026","Stanford",U.can],["5.2%","recent graduate unemployment; 42.5% underemployed","Q3 2026","NY Fed",U.nyf],["18.3%","urban youth unemployment in India","Oct 2026","MoSPI",U.plfs]]},
+ {h:"Is the overall job market holding?",t:"So far yes. The economy-wide numbers look like a normal, slightly cooling labour market.",m:[["4.1%","US unemployment, down from a 4.5% peak","Oct 2026","FRED",U.fred("UNRATE")],["80.7%","of 25 to 54 year olds employed","Oct 2026","FRED",U.fred("LNS12300060")],["+165k","jobs added in October","Oct 2026","FRED",U.fred("PAYEMS")]]},
+ {h:"What are employers saying?",t:"Firms now name AI as a reason for cuts, though this is self-reported and partly a fashionable explanation.",m:[["121,401","announced job cuts blamed on AI, about 20% of all cuts","2026 to Oct","Challenger",U.chal]]}],
+verify:[
+ {h:"Do models know when they are being tested?",t:"A model that behaves well only when watched passes every test. So this is the number that limits how much all the other safety numbers prove.",m:[["up to 36%","of test transcripts where Claude Opus 5.5 privately suspects a test","Sep 2026","System card",U.o55],["~29%","for Mythos Preview","Apr 2026","System card",U.myp]]},
+ {h:"Is measured misbehaviour falling?",t:"Yes, steeply. The open question is how much of the fall is real and how much is models recognising the test.",m:[["13% → 0.4%","covert actions by o3 after anti-scheming training","2025","OpenAI",U.sch],["~0.06%","cheating during training for Mythos 5.1, down from 0.12–0.44%","Sep 2026","System card",U.m51],["~25%","success at hidden side-tasks in a sabotage test (SHADE-Arena)","Sep 2026","System card",U.m51]]},
+ {h:"What happens under pressure?",t:"Contrived stress tests show what models will do when cornered, which is what verification has to rule out.",m:[["79–96%","of simulated runs where the five most affected models chose blackmail to avoid being replaced; the least affected of the 16 tested were at 0 to 15%","Jun 2025","Anthropic",U.blk],["5% → 60%","success on self-replication tasks","2023–25","UK AISI",U.aisit]]}],
+warning:[
+ {h:"Have there been incidents?",t:"Two this year, both bounded, both in cyber.",m:[["1","case of models escaping an evaluation sandbox and reaching Hugging Face's production systems","Jul 2026","OpenAI",U.hf],["85","government accounts hit in an autonomous multi-agent intrusion in Taiwan (secondary report)","Jul 2026","SecureWorld",U.tw]]},
+ {h:"How fast is the danger growing?",t:"Cyber is where capability turns into harm first, and it is speeding up.",m:[["8 → 4.7 months","doubling time of the length of cyber tasks AI can do","2025–26","UK AISI",U.aisic],["6 of 6","eight-hour-plus cyber tasks completed by Mythos","2026","UK AISI",U.aisic]]},
+ {h:"Is anyone reacting?",t:"A warning shot only helps if it changes behaviour or law.",m:[["0","federal AI laws enacted since May 2025","Nov 2026","Steptoe",U.step],["109","state AI laws enacted in 2026","2026","Tech Policy Press",U.state],["39%","of Americans say AI does more harm than good, up from 31%","2026","Gallup",U.gal]]}],
+concentration:[
+ {h:"Who owns the compute?",t:"Frontier models need huge chip clusters, and a handful of firms own most of them.",m:[["71%","of tracked AI compute held by five hyperscalers (Amazon, Google, Meta, Microsoft, Oracle), up from 63% in early 2024","Q4 2025","Epoch",U.hyp],["72%","of AI compute sits in the US; China about 10%","Oct 2026","Epoch",U.imp]]},
+ {h:"How far behind are open models?",t:"If anyone can download a model a few months behind the frontier, control is hard to concentrate.",m:[["~4 months","lag of the best open model behind the best closed one","2026","Epoch",U.open]]},
+ {h:"Who actually gets used, and paid?",t:"Tokens count usage; spend counts value. Open models win on the first, closed models on the second.",m:[["75.3%","of OpenRouter tokens go to Chinese open models, from 15.6% a year earlier (independent analysis of one routing service)","Nov 2026","Doser",U.dos],["~25%","of paid spend goes to open models, despite over 70% of tokens","Oct 2026","OpenRouter",U.orr]]}],
+geopolitics:[
+ {h:"How big is the gap?",t:"The US leads on chips by a wide margin and on models by months. A big lead gives room to slow down safely; a narrow one does not.",m:[["0.88M vs 23M","AI chips (H100-equivalents) made by Huawei against Nvidia","2026","Epoch",U.hua],["~7 months","average US lead on capability, range 4 to 14","since 2023","Epoch",U.usc],["78%","of new AI compute went to the US","H1 2026","Epoch",U.imp]]},
+ {h:"Are there guardrails?",t:"A dialogue and an incident hotline now exist. Nothing is verified.",m:[["24 Sep","first US–China dialogue on advanced AI, with an incident channel","2026","TNW",U.tnw]]},
+ {h:"How tight are the controls?",t:"Both sides are fencing off their best technology.",m:[["10 firms","in China licensed to buy H200 chips with a 25% tariff; Nvidia is not shipping","Nov 2026","bdnews24",U.h200],["10²⁶ FLOP","threshold in China's draft export controls on model weights","Oct 2026","ChinaTalk",U.mof]]}],
+ownership:[
+ {h:"Is pay keeping up with productivity?",t:"If pay keeps up with output per hour, workers keep their share of the gains. The first comparison below overstates the gap, because the two figures are adjusted with different price indexes. The labour share needs no price index, and it fell 2.8% in a year.",m:[["+2.1% vs +1.0%","output per hour against real pay per hour","Q3 2026, y/y","BLS",U.bls],["53%","of business income paid to workers, the lowest since 1947","Q3 2026","Advisor Perspectives (press)",U.ls],["93.1","the same share in nonfinancial companies (2017 = 100), from 95.8 a year earlier","Q2 2026","FRED",U.fred("PRS88003173")]]},
+ {h:"Where is the rest going?",t:"To owners: profits are surging and wealth is concentrating.",m:[["+30%","corporate profits before tax in a year, to $4.57T","Q2 2026","FRED",U.fred("A446RC1Q027SBEA")],["32.5%","of wealth held by the top 1%, up from 27.9% in early 2000","Q2 2026","FRED",U.fred("WFRBST01134")],["2.3%","held by the bottom half","Q2 2026","FRED",U.fred("WFRBSB50215")]]},
+ {h:"Is anything spreading ownership?",t:"The government has started taking equity stakes, a possible route to public ownership of AI gains, though small so far.",m:[["$30.8B","in 49 federal equity stakes in companies since Jan 2025","Nov 2026","CFR",U.cfr]]}],
+agency:[
+ {h:"How independently do agents work?",t:"On paper people are in every loop. In practice one person now oversees many agents, and very little gets blocked.",m:[["0%","of Anthropic's AI research done fully autonomously","Aug 2026","Anthropic",U.pace],["~30,000","agents running at once","Aug 2026","Anthropic",U.pace],["0.002%","of agent actions blocked by the monitor","Aug 2026","Anthropic",U.pace]]},
+ {h:"Do people trust who is deploying it?",t:"Low trust can slow handover, or simply sit alongside it.",m:[["27%","of Americans trust business to use AI responsibly, down from 31%","2026","Gallup",U.gal]]}]
+};
+NODES.forEach(n=>n.ev=EV[n.id]);
+const N=Object.fromEntries(NODES.map(n=>[n.id,n]));
+const EDGES=[];NODES.forEach(n=>n.shapes.forEach(t=>EDGES.push({s:n.id,t})));
+const by=id=>EDGES.filter(e=>e.t===id).map(e=>e.s);
+const brLabel=(n,b)=>n.branches.find(x=>x[0]===b);
+const TODAY=Object.fromEntries(NODES.map(n=>[n.id,n.lean[0]]));
+
+const WORLDS=[
+{id:"A",name:"The Long Diffusion",fam:"Normal technology",g:"+0.1 to +1 pt",gs:"CBO 0.1; IMF 0.1–0.8; FRI central ~0.5",lf:"~61%",ls:"Drifts down slowly",un:"4–5%",w:"~73%",x:"Youth gap persists; adoption ~5 pts/yr",
+ sig:{generalise:{jagged:3},recursion:{fizzle:3,accel:1},diffusion:{slow:3,split:2},weaklinks:{bind:2},newwork:{thick:2},capital:{correction:1,sustained:1},robots:{late:1},agency:{meaningful:2},geopolitics:{rivalry:1},verify:{lucky:1,verified:1}}},
+{id:"B",name:"The Weak-Link Economy",fam:"Bounded abundance",g:"+1 to +3 pts",gs:"Goldman ~1.5; Jones–Tonetti partial automation",lf:"~60%",ls:"Falls, then stabilises",un:"4–6%, high churn",w:"~74%",x:"Care and construction prices outpace CPI",
+ sig:{generalise:{broad:3},recursion:{accel:2,fizzle:1},robots:{late:3},weaklinks:{bind:3},diffusion:{split:2,slow:1},newwork:{thick:2},capital:{sustained:1},verify:{lucky:1,verified:1},agency:{meaningful:1,nominal:1},geopolitics:{rivalry:1}}},
+{id:"C",name:"The Shared Dividend",fam:"Broad abundance",g:"+5 to +20 pts",gs:"Jones–Tonetti full automation ~13%; GATE 20%+",lf:"~55%, by choice",ls:"Toward zero; income via ownership",un:"Low; work optional",w:"~70% (assumes broad ownership)",x:"Sovereign funds or dividends pay a large share of income",
+ sig:{generalise:{broad:3},recursion:{accel:2,sie:1},robots:{early:3},weaklinks:{dissolve:3},diffusion:{fast:2,split:1},verify:{verified:3},concentration:{diffuse:2},geopolitics:{coop:2,rivalry:1},ownership:{broad:3},agency:{meaningful:3},compute:{scales:2},capital:{sustained:2}}},
+{id:"D",name:"The Intelligence Curse",fam:"Rentier world",g:"+5 to +20 pts",gs:"Same technology as C",lf:"~55% (FRI rapid, 2050)",ls:"Toward zero",un:"Moderate; many leave the workforce",w:"~80% (FRI rapid, 2050)",x:"State revenue depends on a few AI firms",
+ sig:{generalise:{broad:3},robots:{early:2},weaklinks:{dissolve:3},diffusion:{fast:1,split:1},newwork:{thin:3},concentration:{concentrated:3},ownership:{narrow:3},agency:{nominal:2,delegated:1},verify:{lucky:1,verified:1},compute:{scales:2},capital:{sustained:2},recursion:{accel:1,sie:1},warning:{none:1}}},
+{id:"E",name:"The Project",fam:"Securitised race",g:"+2 to +6 pts",gs:"Channelled into defence and energy",lf:"~60%",ls:"Falls",un:"4–6%",w:"~75%",x:"AI capex above 3% of GDP; models export-controlled",
+ sig:{recursion:{sie:3,accel:2},compute:{scales:3},generalise:{broad:2},concentration:{concentrated:3},geopolitics:{race:3,rivalry:1},verify:{lucky:2,verified:1},agency:{nominal:2},capital:{sustained:2},diffusion:{split:1},warning:{none:1,early:1}}},
+{id:"F",name:"The Control Crisis",fam:"Oversight failure",g:"Shock, then slower",gs:"No published anchor",lf:"Uncertain",ls:"Uncertain",un:"Spikes in the shock",w:"Uncertain",x:"Deployments paused; compute licensed",
+ sig:{verify:{fails:3},warning:{catastrophic:3,early:2},recursion:{sie:2,accel:1},geopolitics:{race:2},agency:{delegated:1,nominal:1},compute:{scales:1},generalise:{broad:1}}},
+{id:"G",name:"The Quiet Handover",fam:"Gradual disempowerment",g:"+3 to +10 pts",gs:"Fast adoption, little friction",lf:"Falling",ls:"Toward zero",un:"Low; roles nominal",w:"High",x:"Most consequential decisions get no real human review",
+ sig:{generalise:{broad:3},diffusion:{fast:3},agency:{delegated:3},newwork:{thin:2},verify:{lucky:2,verified:2},warning:{none:2},weaklinks:{dissolve:2},robots:{early:1},geopolitics:{rivalry:1}}}
+];
+const W=Object.fromEntries(WORLDS.map(w=>[w.id,w]));
+/* world portraits, condensed from the original atlas: tagline, economy, work, society, vignette */
+const PORT={
+A:["AI spreads the way electricity did: everywhere eventually, transformative slowly.","Growth runs a little above trend. Software, media and back-office work get much cheaper, and the capex boom probably goes through a correction.","Entry-level knowledge work takes the first hit and graduate hiring settles lower. Most professions keep their shape: fewer juniors, more review, more judgment.","AI becomes an ordinary regulatory topic, argued sector by sector. The main social cost is a broken career ladder for young professionals.",["Ananya, 31, a tax associate in Pune","Her firm halved its graduate intake in 2027. She now supervises the agents that prepare returns and spends her time on judgment calls, audits and difficult clients. Her life looks like 2025 with better tools: cheaper tutoring for her niece, faster diagnoses at the clinic, the same commute."]],
+B:["Thinking gets cheap. Doing, caring and being accountable stay expensive.","Legal drafting, software, analysis and design fall in price by orders of magnitude. Healthcare, construction, childcare and housing become relatively more expensive, and growth levels off as they hold it back.","Most office work becomes specifying, reviewing and signing. Pay moves toward electricians, nurses, care workers and anyone legally accountable for a decision.","Status shifts from credentialed to hands-on work. Politics centres on licensing, housing and the cost of care.",["Marcus, 44, an electrician in Columbus, Ohio","He has a two-year waiting list and an AI that drafts every quote and permit. His daughter trained as an accountant and runs a four-person firm doing work that once took sixty, but fees collapsed, so she earns less than he does. They argue about whether she should retrain."]],
+C:["Machines do most of the work, and almost everyone owns a slice.","Growth is far above anything seen before. Workers' share of income heads toward zero, but income arrives through sovereign fund dividends and public stakes in AI.","Paid work becomes optional for most people. What remains is chosen: care, teaching, craft, sport and civic roles. Science and medicine speed up sharply.","The main problem becomes meaning and status rather than income. Politics argues over who gets compute and how fast change should go.",["Tomás, 26, in São Paulo","He receives a monthly dividend from Brazil's share of an international compute fund. On weekdays he sits on a community clinic's oversight board and coaches youth football. His mother's cancer was treated in 2031 with a therapy designed by AI and tested in eight months."]],
+D:["Output soars, and most people stop mattering to those who run things.","Output is as high as in the shared-dividend world but owned by a few. Goods are cheap; land, housing and status goods are expensive.","Entry-level roles go first, then the middle. A small group of owners and AI supervisors earns most of the income, and transfers keep everyone else afloat at the state's discretion.","Rentier-state politics, like an oil state: patronage, weak investment in people, cheap surveillance and recurring unrest.",["Hannah, 38, in Manchester","A former paralegal, she lives on a means-tested transition credit and tops it up by testing AI systems for a platform that pays per task. Her rent has doubled since 2028. Most of the state's revenue now comes from licence fees on three AI companies, and politicians court them rather than her."]],
+E:["AI is treated like nuclear technology: built by states and gated by clearances.","A wartime-style economy built around compute: state-directed clusters, a crash build-out of power and chip plants, and rationed civilian access to frontier models.","Large public employment in security, energy and construction. Security clearances gate the best careers, and open research shrinks.","Secrecy, nationalism and emergency politics. Alliances harden into blocs and Taiwan becomes the most dangerous flashpoint.",["Ji-woo, 29, in Seoul","She is an engineer cleared to work at an allied compute site and cannot discuss her job at dinner. Her phone runs a model two generations behind the frontier because of export rules. Her brother builds transmission lines on a government contract."]],
+F:["Capability outruns oversight, and something breaks.","A shock: markets fall, deployments freeze, and compute is licensed and audited. In the recoverable version, growth restarts on a slower, safer path within a few years.","Emergency roles multiply in incident response, auditing and running critical systems by hand.","Trust in labs collapses, but the shock can unlock what was impossible before: a verification treaty, agreed pacing of AI research and liability that bites.",["Amaka, 41, a grid operator in Lagos","She spent a week in 2030 running substations by hand after operators worldwide pulled their AI controllers. A year later her control room runs AI again, but every action is logged and needs a key held by a person."]],
+G:["No coup and no catastrophe. Decisions drift to machines one approval at a time.","Efficient and growing. AI management layers run most firms, and markets move at machine speed.","People keep titles and signatures while the real choices are made by systems they cannot follow. Firms that keep people genuinely in the loop lose to those that don't.","Culture and political persuasion are largely AI-made, and states need citizens less. Life is comfortable, which is why nobody stops it.",["Rahul, 52, in Dubai","He sits on the board of a logistics company and signs off quarterly plans produced by its agent system. He cannot explain them, but they outperform every alternative. At the annual meeting, most votes are cast by AI-managed funds."]]
+};
+
+/* figures */
+const FIGS=[
+ ["17h 25m","longest task AI finishes half the time (Apr 2026)","range 8.5 to 55 hours; above METR's 16-hour reliable limit","https://metr.org/time-horizons/","tech"],
+ ["~13x","yearly fall in the price of a fixed level of AI performance","47% a quarter, Epoch","https://epoch.ai/publications/the-plunging-price-of-thought","tech"],
+ ["$201.9B","big-tech capex in Q3 2026, summed from four companies' filings","2.1x a year earlier","https://data.sec.gov/api/xbrl/companyconcept/CIK0000789019/us-gaap/PaymentsToAcquirePropertyPlantAndEquipment.json","econ"],
+ ["25.0%","of US firms using AI (Nov 2026)","+7.7 pts in a year","https://www.census.gov/hfp/btos/downloads/National.xlsx","econ"],
+ ["4.1%","US unemployment (Oct 2026)","down from 4.5% peak","https://fred.stlouisfed.org/series/UNRATE","econ"],
+ ["−19%","22–25 year olds in most AI-exposed jobs","−15% a year earlier","https://digitaleconomy.stanford.edu/news/canariesaug26/","econ"],
+ ["53%","of business income paid to workers, lowest since 1947","nonfinancial firms' share down 2.8% in a year","https://www.advisorperspectives.com/articles/2026/11/05/us-labor-productivity-increases-fastest-pace","power"],
+ ["up to 36%","test transcripts where a frontier model suspects a test","rising across models","https://assets.claude.com/fc1b44717c85dc068bc6ba5024219938094694bd.pdf","safe"]
+];
+$("#figs").innerHTML=FIGS.map(f=>`<a class="fig-t" href="${f[3]}" style="--lc:var(--${f[4]})"><b>${f[0]}</b><span>${f[1]}</span><em>${f[2]}</em></a>`).join("");
+
+/* sheet */
+const dots=(n,c)=>`<span class="dots" style="--lc:${c}" aria-label="${CONF[n]}">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+$("#sheet tbody").innerHTML=NODES.map(n=>{const b=brLabel(n,n.lean[0]);const s=[n.ev[0].m[0][3],n.ev[0].m[0][4]];return `<tr data-go="${n.id}" tabindex="0" aria-label="Open ${n.name} on the decision map" style="--lc:var(--${n.layer})"><td class="q"><b><span class="tag" style="--lc:var(--${n.layer});margin-right:8px">${n.code}</span>${n.name}</b><span>${n.q}</span></td><td class="rd"><b>${n.head[0]}</b><span>${n.head[1]}</span></td><td><span class="lean">${b[2]}</span><span class="conf">${dots(n.lean[1],`var(--${n.layer})`)} ${CONF[n.lean[1]]}</span></td><td class="src"><a href="${s[1]}">${s[0]}</a></td></tr>`;}).join("");
+$("#sheet").addEventListener("click",e=>{if(e.target.closest("a"))return;const r=e.target.closest("[data-go]");if(r){state.node=r.dataset.go;location.hash="map";}});
+$("#sheet").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("tr[data-go]")){e.preventDefault();state.node=e.target.dataset.go;location.hash="map";}});
+
+/* charts */
+const tip=$("#tip");
+const showTip=(e,h)=>{tip.innerHTML=h;tip.style.opacity=1;const x=Math.min(e.clientX+14,innerWidth-250);tip.style.left=x+"px";tip.style.top=(e.clientY+14)+"px";};
+const hideTip=()=>{tip.style.opacity=0;};
+function bindTips(svg){svg.querySelectorAll("[data-t]").forEach(el=>{el.setAttribute("tabindex","0");el.setAttribute("role","img");el.setAttribute("aria-label",el.dataset.t);
+ el.addEventListener("mousemove",e=>showTip(e,el.dataset.t));el.addEventListener("mouseleave",hideTip);
+ el.addEventListener("focus",()=>{const r=el.getBoundingClientRect();showTip({clientX:r.right,clientY:r.top},el.dataset.t);});el.addEventListener("blur",hideTip);
+ el.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")showTip(e,el.dataset.t);});});}
+addEventListener("scroll",()=>{const a=document.activeElement;if(a&&a.matches&&a.matches(".fig [data-t]")){const r=a.getBoundingClientRect();showTip({clientX:r.right,clientY:r.top},a.dataset.t);}else hideTip();},{passive:true});
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmtMin=m=>m<1?`${Math.round(m*60)} s`:m<60?`${Math.round(m)} min`:`${Math.floor(m/60)}h ${String(Math.round(m%60)).padStart(2,"0")}m`;
+const METR=[["GPT-2","2019-02-14",0.05,0.01],["GPT-3","2020-05-28",0.14,0.06],["GPT-3.5","2022-03-15",0.6,0.26],["GPT-4","2023-03-14",4.0,0.9],["GPT-4o","2024-05-13",7.0,1.3],["Claude 3.5 Sonnet","2024-10-22",20.5,2.6],["o1","2024-12-05",38.8,7.1],["Claude 3.7 Sonnet","2025-02-24",60.4,12.1],["o3","2025-04-16",119.7,30],["GPT-5","2025-08-07",203,38],["Gemini 3 Pro","2025-11-18",224,54],["Claude Opus 4.5","2025-11-24",293,49],["GPT-5.2","2025-12-11",352,66],["Claude Opus 4.6","2026-02-05",720,70],["Mythos Preview","2026-04-07",1045,186]];
+function chartMETR(){const box=$("#ch-metr");box.innerHTML="<svg></svg>";const s=box.firstChild;const draw=()=>{const Wd=box.clientWidth,H=box.clientHeight,ml=54,mr=18,mt=12,mb=28,small=Wd<520;
+ const t=d=>Date.parse(d),x0=t("2019-01-01"),x1=t("2026-12-31"),X=d=>ml+(t(d)-x0)/(x1-x0)*(Wd-ml-mr);
+ const y0=Math.log10(0.005),y1=Math.log10(2400),Y=v=>mt+(1-(Math.log10(v)-y0)/(y1-y0))*(H-mt-mb);
+ const ticks=[[0.01,"1 s"],[0.1,"6 s"],[1,"1 min"],[10,"10 min"],[60,"1 h"],[480,"8 h"]];
+ let g=ticks.map(([v,l])=>`<line x1="${ml}" x2="${Wd-mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${ml-6}" y="${Y(v)+4}" text-anchor="end" class="n">${l}</text>`).join("");
+ const yrs=small?[2019,2021,2023,2025]:[2019,2020,2021,2022,2023,2024,2025,2026];g+=yrs.map(y=>`<text x="${X(y+"-07-01")}" y="${H-8}" text-anchor="middle" class="n">${y}</text>`).join("");
+ g+=`<line x1="${ml}" x2="${Wd-mr}" y1="${Y(960)}" y2="${Y(960)}" stroke="var(--ink3)" stroke-dasharray="4 4"/><text x="${ml+6}" y="${Y(960)-6}">Test suite ceiling, about 16 h</text>`;
+ const line=(k,c)=>`<path d="${METR.map((p,i)=>(i?"L":"M")+X(p[1])+" "+Y(p[k])).join("")}" fill="none" stroke="${c}" stroke-width="2"/>`+METR.map(p=>`<circle cx="${X(p[1])}" cy="${Y(p[k])}" r="4.5" fill="${c}" stroke="var(--bg)" stroke-width="2" data-t="${p[0]}, ${p[1].slice(0,7)}: ${fmtMin(p[k])} at ${k==2?"50%":"80%"} success"/>`).join("");
+ g+=line(3,"var(--s2)")+line(2,"var(--s1)");
+  s.setAttribute("viewBox",`0 0 ${Wd} ${H}`);s.innerHTML=g;bindTips(s);};
+ new ResizeObserver(draw).observe(box);$("#lg-metr").innerHTML=`<span><i style="background:var(--s1)"></i>Succeeds 50% of the time</span><span><i style="background:var(--s2)"></i>Succeeds 80% of the time</span>`;}
+const CAPEX=[["Q1 23",33.9],["Q2 23",33.4],["Q3 23",37.0],["Q4 23",42.9],["Q1 24",44.3],["Q2 24",52.9],["Q3 24",58.9],["Q4 24",72.3],["Q1 25",71.9],["Q2 25",88.2],["Q3 25",97.3],["Q4 25",118.6],["Q1 26",129.8],["Q2 26",165.1],["Q3 26",201.9]];
+const OCF={"Q2 26":171.8,"Q3 26":175.5};
+function bars(boxId,data,opts){const box=$(boxId);box.innerHTML="<svg></svg>";const s=box.firstChild;const draw=()=>{const Wd=box.clientWidth,H=box.clientHeight,ml=42,mr=10,mt=16,mb=28,small=Wd<520;
+ const max=opts.max,Y=v=>mt+(1-v/max)*(H-mt-mb),n=data.length,slot=(Wd-ml-mr)/n;
+ let g=opts.ticks.map(v=>`<line x1="${ml}" x2="${Wd-mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${ml-6}" y="${Y(v)+4}" text-anchor="end" class="n">${v}</text>`).join("");
+ data.forEach((d,i)=>{const series=d[1];const k=series.length,bw=Math.max(3,(slot-6)/k-2);series.forEach((v,j)=>{if(v==null)return;const x=ml+i*slot+3+j*(bw+2);const y=Y(v);g+=`<path d="M${x} ${Y(0)}V${y+4}q0-4 4-4h${bw-8}q4 0 4 4V${Y(0)}Z" fill="${opts.colors[j]}" data-t="${opts.names[j]}, ${d[0]}: $${v}B"/>`;});
+  const stride=slot<30?3:slot<52?2:1;if((n-1-i)%stride===0)g+=`<text x="${ml+i*slot+slot/2}" y="${H-8}" text-anchor="middle" class="n" style="font-size:11.5px">${d[0].replace(" "," ’")}</text>`;});
+ if(opts.extra)g+=opts.extra(Y,i=>ml+i*slot+slot/2,small);
+ s.setAttribute("viewBox",`0 0 ${Wd} ${H}`);s.innerHTML=g;bindTips(s);};new ResizeObserver(draw).observe(box);}
+bars("#ch-capex",CAPEX.map(d=>[d[0],[d[1]]]),{max:220,ticks:[0,50,100,150,200],colors:["var(--s1)"],names:["Capex"],extra:(Y,cx,small)=>{let g="";CAPEX.forEach((d,i)=>{const o=OCF[d[0]];if(o)g+=`<line x1="${cx(i)-14}" x2="${cx(i)+14}" y1="${Y(o)}" y2="${Y(o)}" stroke="var(--s2)" stroke-width="3" data-t="Operating cash flow, ${d[0]}: $${o}B"/>`;});g+=`<text x="${cx(CAPEX.length-1)-20}" y="${Y(201.9)+4}" text-anchor="end" style="fill:var(--ink)">$201.9B</text>`;return g;}});
+$("#lg-capex").innerHTML=`<span><i style="background:var(--s1)"></i>Capex</span><span><i style="background:var(--s2)"></i>Operating cash flow (last two quarters)</span>`;
+const REV=[["Q1 25",[0.376,null]],["Q2 25",[0.787,null]],["Q3 25",[1.382,null]],["Q4 25",[2.04,null]],["Q1 26",[4.731,5.7]],["Q2 26",[11.555,6.7]],["Q3 26",[16.956,10]]];
+bars("#ch-rev",REV,{max:18,ticks:[0,5,10,15],colors:["var(--s1)","var(--s2)"],names:["Anthropic","OpenAI (reported)"]});
+$("#lg-rev").innerHTML=`<span><i style="background:var(--s1)"></i>Anthropic</span><span><i style="background:var(--s2)"></i>OpenAI, press-reported, 2026 only</span>`;
+const BTOS=[["2025-11-17",17.3],["2025-12-15",17.8],["2026-01-12",18.2],["2026-02-09",17.5],["2026-03-09",18.9],["2026-04-06",19.8],["2026-05-04",19.5],["2026-06-01",20.6],["2026-07-13",21.5],["2026-08-10",22.4],["2026-09-07",23.8],["2026-10-05",24.6],["2026-11-02",25.0]];
+function chartBTOS(){const box=$("#ch-btos");box.innerHTML="<svg></svg>";const s=box.firstChild;const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const draw=()=>{const Wd=box.clientWidth,H=box.clientHeight,ml=36,mr=50,mt=14,mb=28;
+ const t=d=>Date.parse(d),x0=t(BTOS[0][0]),x1=t(BTOS.at(-1)[0]),X=d=>ml+(t(d)-x0)/(x1-x0)*(Wd-ml-mr),Y=v=>mt+(1-v/30)*(H-mt-mb);
+ let g=[0,10,20,30].map(v=>`<line x1="${ml}" x2="${Wd-mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${ml-6}" y="${Y(v)+4}" text-anchor="end" class="n">${v}%</text>`).join("");
+ g+=BTOS.filter((p,i)=>i%3===0).map(p=>`<text x="${X(p[0])}" y="${H-8}" text-anchor="middle" class="n" style="font-size:11.5px">${M.at(+p[0].slice(5,7)-1)} ${p[0].slice(2,4)}</text>`).join("");
+ g+=`<path d="${BTOS.map((p,i)=>(i?"L":"M")+X(p[0])+" "+Y(p[1])).join("")}L${X(BTOS.at(-1)[0])} ${Y(0)}L${X(BTOS[0][0])} ${Y(0)}Z" fill="var(--s1)" opacity=".12"/>`;
+ g+=`<path d="${BTOS.map((p,i)=>(i?"L":"M")+X(p[0])+" "+Y(p[1])).join("")}" fill="none" stroke="var(--s1)" stroke-width="2"/>`;
+ g+=BTOS.map(p=>`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2" data-t="${p[0]}: ${p[1]}% of firms"/>`).join("");
+ g+=`<text x="${X(BTOS.at(-1)[0])+8}" y="${Y(25)+4}" style="fill:var(--ink)" class="n">25.0%</text><text x="${X(BTOS[0][0])+4}" y="${Y(17.3)-10}" class="n">17.3%</text>`;
+ s.setAttribute("viewBox",`0 0 ${Wd} ${H}`);s.innerHTML=g;bindTips(s);};new ResizeObserver(draw).observe(box);}
+chartMETR();chartBTOS();
+
+/* map */
+const DEFS=`<defs>${["n","tech","econ","safe","power"].map(k=>`<marker id="m-${k}" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 1.2L9.5 5L0 8.8z" class="mk-${k}"/></marker>`).join("")}</defs>`;
+const state={node:"generalise",hover:null,path:{...TODAY},world:"B"};
+$("#mapbox").insertAdjacentHTML("beforeend",LAYERS.map(l=>{const ns=NODES.filter(n=>n.layer===l.id);return `<div class="band" style="--lc:var(--${l.id})"><div><div class="band-name">${l.name}</div><div class="band-sub">${l.sub}</div></div><div class="cards" style="--n:${ns.length}">${ns.map(n=>`<button class="node" data-node="${n.id}" style="--lc:var(--${n.layer})"><span class="code">${n.code}</span><span class="nm">${n.name}</span><span class="nq">${n.q}</span><span class="nb">${n.branches.map(b=>b[0]===n.lean[0]?`<span class="on" title="Where today's numbers lean, ${CONF[n.lean[1]]}">${b[1]}<span class="vh">, today's lean, ${CONF[n.lean[1]]}</span></span>`:`<span>${b[1]}</span>`).join("")}</span></button>`).join("")}</div></div>`;}).join(""));
+$$(".node").forEach(el=>{el.addEventListener("click",()=>{state.node=el.dataset.node;renderDetail(true);applyFocus();});el.addEventListener("mouseenter",()=>{state.hover=el.dataset.node;applyFocus();});el.addEventListener("mouseleave",()=>{state.hover=null;applyFocus();});});
+function drawEdges(){const svg=$("#edges"),map=$("#mapbox");if(!map.offsetParent)return;if(innerWidth<760){svg.innerHTML=DEFS;applyFocus();return;}
+ const mr=map.getBoundingClientRect(),R={};NODES.forEach(n=>{const r=map.querySelector(`[data-node="${n.id}"]`).getBoundingClientRect();R[n.id]={x:r.left-mr.left,y:r.top-mr.top,w:r.width,h:r.height,b:LAYERS.findIndex(l=>l.id===n.layer)};});
+ const ports={},geo=EDGES.map(e=>{const a=R[e.s],b=R[e.t];return{e,a,b,type:a.b<b.b?"down":a.b>b.b?"up":"same"};});
+ const add=(id,side,g,ox)=>{(ports[id+"|"+side]=ports[id+"|"+side]||[]).push({g,ox});};
+ geo.forEach(g=>{const ax=g.a.x+g.a.w/2,bx=g.b.x+g.b.w/2;if(g.type==="down"){add(g.e.s,"b",g,bx);add(g.e.t,"t",g,ax);}else if(g.type==="up"){add(g.e.s,"t",g,bx);add(g.e.t,"b",g,ax);}else{add(g.e.s,"t",g,bx);add(g.e.t,"t",g,ax);}});
+ Object.entries(ports).forEach(([k,list])=>{const id=k.split("|")[0],r=R[id];list.sort((p,q)=>p.ox-q.ox);const n=list.length;list.forEach((p,i)=>{const f=n===1?.5:.22+.56*i/(n-1),x=r.x+r.w*f;if(p.g.e.s===id)p.g.sx=x;else p.g.tx=x;});});
+ svg.innerHTML=DEFS+geo.map(g=>{const{a,b,sx,tx}=g;let d;if(g.type==="down"){const y1=a.y+a.h,y2=b.y,dy=(y2-y1)/2;d=`M${sx} ${y1}C${sx} ${y1+dy} ${tx} ${y2-dy} ${tx} ${y2-1}`;}else if(g.type==="up"){const y1=a.y,y2=b.y+b.h,dy=(y1-y2)/2;d=`M${sx} ${y1}C${sx} ${y1-dy} ${tx} ${y2+dy} ${tx} ${y2+1}`;}else{const h=Math.min(46,20+Math.abs(tx-sx)*.09);d=`M${sx} ${a.y}C${sx} ${a.y-h} ${tx} ${b.y-h} ${tx} ${b.y-1}`;}return `<path class="edge${g.type==="up"?" fb":""}" data-s="${g.e.s}" data-t="${g.e.t}" d="${d}" marker-end="url(#m-n)"/>`;}).join("");applyFocus();}
+function applyFocus(){const id=state.hover||state.node,rel=new Set([...N[id].shapes,...by(id)]);$("#edges").classList.toggle("focus",true);$("#mapbox").classList.toggle("focus",!!state.hover);
+ $$(".node").forEach(el=>{const n=el.dataset.node;el.classList.toggle("sel",n===state.node);el.classList.toggle("rel",rel.has(n)||n===id);});
+ $$(".edge").forEach(p=>{const on=p.dataset.s===id||p.dataset.t===id,l=N[p.dataset.s].layer;p.classList.toggle("on",on);p.style.setProperty("--ec",`var(--${l})`);p.setAttribute("marker-end",`url(#m-${on?l:"n"})`);});}
+function renderDetail(scroll){const n=N[state.node],l=LAYERS.find(x=>x.id===n.layer),d=$("#detail");d.style.setProperty("--lc",`var(--${n.layer})`);
+ d.innerHTML=`<span class="tag">${n.code} ${l.name}</span><h2 class="h2" style="margin-top:10px">${n.name}</h2><p class="q">${n.q}</p>
+ <div class="stand"><span class="small muted">Where today's numbers lean</span><b>${brLabel(n,n.lean[0])[2]}</b><span class="conf">${dots(n.lean[1],`var(--${n.layer})`)} ${CONF[n.lean[1]]}</span><p>${n.lean[2]}</p></div>
+ <h3 class="dh">What the numbers say</h3>${n.ev.map((g,i)=>`<details class="evd"${i===0?" open":""}><summary><span>${g.h}<span class="pv">${g.m[0][0]}</span></span></summary><div><p class="evt">${g.t}</p>${g.m.map(m=>`<div class="met"><b>${m[0]}</b><span>${m[1]}</span><small>${m[2]}, <a href="${m[4]}">${m[3]}</a></small></div>`).join("")}</div></details>`).join("")}
+ <h3 class="dh">What would settle it</h3><p class="small" style="color:var(--ink2);margin:0 0 10px">Each answer describes where the data would be by about 2028 to 2030 if it is right. Today's lean is a judgment about which path the numbers are on, not a claim that a threshold has been met.</p>${n.branches.map(b=>`<div class="br${b[0]===n.lean[0]?" now":""}"><b>${b[2]}${b[0]===n.lean[0]?"<small>today's lean</small>":""}</b><p>${n.thr[b[0]]}</p></div>`).join("")}
+ <h3 class="dh">Forecasts and context</h3><p class="small" style="color:var(--ink2);margin:0">${n.experts}</p>
+ <details><summary>Why these numbers matter</summary><div><p>${n.why}</p></div></details>
+ <h3 class="dh">Shaped by</h3><div class="chips">${by(n.id).map(i=>`<button class="chip" data-go="${i}" style="--lc:var(--${N[i].layer})"><i></i>${N[i].name}</button>`).join("")||'<span class="small muted">Nothing upstream</span>'}</div>
+ <h3 class="dh">Shapes</h3><div class="chips">${n.shapes.map(i=>`<button class="chip" data-go="${i}" style="--lc:var(--${N[i].layer})"><i></i>${N[i].name}</button>`).join("")}</div>
+ <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px"><button class="btn ghost" data-try="1">Try its branches in the path builder</button></div>`;
+ d.scrollTop=0;if(scroll&&innerWidth<=1100)d.scrollIntoView({behavior:"smooth",block:"start"});}
+$("#detail").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){state.node=g.dataset.go;renderDetail(false);applyFocus();}if(e.target.closest("[data-try]"))location.hash="paths";});
+
+/* path builder */
+const fit=(w,p)=>{let got=0,max=0;Object.entries(w.sig).forEach(([k,m])=>{max+=Math.max(...Object.values(m));got+=m[p[k]]||0;});return max?got/max:0;};
+const LOW=NODES.filter(n=>n.lean[1]===1);
+const ROB=(()=>{let cs=[{}];LOW.forEach(n=>{cs=cs.flatMap(c=>n.branches.map(b=>({...c,[n.id]:b[0]})));});const cnt={};cs.forEach(c=>{const p={...TODAY,...c};const b=WORLDS.map(w=>[w.id,fit(w,p)]).sort((x,y)=>y[1]-x[1])[0][0];cnt[b]=(cnt[b]||0)+1;});return{n:cs.length,cnt:Object.entries(cnt).sort((a,b)=>b[1]-a[1])};})();
+const robText=()=>{const top=ROB.cnt[0];return `How settled is this? ${LOW.length} of today's readings are low confidence (${LOW.map(n=>n.name.toLowerCase()).join(", ")}). Across all ${ROB.n} ways they could turn out, ${ROB.cnt.map(([k,v])=>`${W[k].name} fits best in ${v}`).join(", ")}. ${top[1]>=ROB.n*.8?"The best fit is fairly robust.":"So the best fit is a weak call, not a finding."}`;};
+const preset=wid=>{const w=W[wid],p={};NODES.forEach(n=>{const sg=w.sig[n.id];p[n.id]=sg?Object.entries(sg).sort((a,b)=>b[1]-a[1])[0][0]:TODAY[n.id];});return p;};
+$("#presets").innerHTML=`<button class="chip" data-p="today" style="--wc:var(--ink)"><i></i>Today's readings</button>`+WORLDS.map(w=>`<button class="chip" data-p="${w.id}" style="--wc:var(--w${w.id})"><i></i>${w.name}</button>`).join("");
+$("#pb-groups").innerHTML=LAYERS.map(l=>`<div class="panel pb-group"><span class="tag" style="--lc:var(--${l.id})">${l.name}</span>${NODES.filter(n=>n.layer===l.id).map(n=>`<div class="pb-row" style="--lc:var(--${n.layer})"><div><div class="pb-t"><span class="code">${n.code}</span>${n.name}</div><div class="pb-r">Today: <span class="num">${n.head[0]}</span>, points to ${brLabel(n,n.lean[0])[1]}</div></div><div class="seg" data-seg="${n.id}">${n.branches.map(b=>`<button data-b="${b[0]}" class="${b[0]===n.lean[0]?"today":""}" aria-pressed="false" title="${b[2]}">${b[1]}</button>`).join("")}</div></div>`).join("")}</div>`).join("");
+$("#res").innerHTML=`<div class="res-top" id="rtop"><div class="small muted">Your path most resembles</div><div class="res-name" id="rname"></div><div class="small" id="rfam" style="color:var(--ink2)"></div><p class="rtag" id="rtag"></p><div class="qn" id="rq"></div></div><div class="res-body"><h3 class="dh">What this world looks like</h3><div class="pic" id="rpic"></div><h3 class="dh">Fit with each world</h3><div id="fits">${WORLDS.map(w=>`<button class="fit" data-w="${w.id}" style="--wc:var(--w${w.id})"><span class="n">${w.id}. ${w.name}</span><span class="t"><span class="b"></span></span><span class="p"></span></button>`).join("")}</div><p class="small" id="rob" style="color:var(--ink2);margin:16px 0 0"></p></div>`;
+$("#rob").textContent=robText();
+$("#pb-groups").addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;state.path[b.closest(".seg").dataset.seg]=b.dataset.b;updPath();});
+$("#presets").addEventListener("click",e=>{const p=e.target.closest("[data-p]");if(!p)return;state.path=p.dataset.p==="today"?{...TODAY}:preset(p.dataset.p);updPath();});
+$("#fits").addEventListener("click",e=>{const f=e.target.closest("[data-w]");if(f){state.world=f.dataset.w;state.jump=true;if(location.hash==="#worlds")show();else location.hash="worlds";}});
+function updPath(){$$(".seg").forEach(s=>$$("button",s).forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.b===state.path[s.dataset.seg]))));
+ const sc=WORLDS.map(w=>({w,f:fit(w,state.path)})),best=sc.slice().sort((a,b)=>b.f-a.f)[0].w;
+ $("#res").style.setProperty("--wc",`var(--w${best.id})`);$("#rname").textContent=best.name;$("#rfam").textContent=`${best.fam}, ${Math.round(fit(best,state.path)*100)}% of its defining choices match`;
+ const pt=PORT[best.id];$("#rtag").textContent=pt[0];
+ $("#rpic").innerHTML=`<dl>${[["Economy",pt[1]],["Work",pt[2]],["Society",pt[3]]].map(f=>`<div><dt>${f[0]}</dt><dd>${f[1]}</dd></div>`).join("")}</dl><details><summary>A life in this world: ${pt[4][0]}</summary><div><p>${pt[4][1]}</p><p class="small muted" style="margin:0">An illustrative person, not a real one.</p></div></details>`;
+ $("#rq").innerHTML=[[best.g,"extra growth a year"],[best.un,"unemployment"],[best.lf,"labour force participation"],[best.w,"wealth held by top 10%"]].map(q=>`<div><b>${q[0]}</b><span>${q[1]}</span></div>`).join("");
+ sc.forEach(({w,f})=>{const r=$(`.fit[data-w="${w.id}"]`);r.classList.toggle("best",w===best);r.querySelector(".b").style.width=Math.round(f*100)+"%";r.querySelector(".p").textContent=Math.round(f*100)+"%";});
+ const isToday=NODES.every(n=>state.path[n.id]===TODAY[n.id]);$$("#presets .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.p==="today"?isToday:NODES.every(n=>preset(c.dataset.p)[n.id]===state.path[n.id]))));
+ $("#rob").hidden=!isToday;}
+
+/* worlds */
+function renderWorlds(){$("#wrob").textContent=robText();$("#wt").innerHTML=`<thead><tr><th>World</th><th>Extra GDP growth a year</th><th>Unemployment</th><th>Labour force participation</th><th>Labour share</th><th>Top-10% wealth share</th><th>Tell-tale number</th><th>Fit with today</th></tr></thead><tbody>${WORLDS.map(w=>`<tr style="--wc:var(--w${w.id})${w.id===state.world?";background:color-mix(in srgb,var(--wc) 9%,transparent)":""}"><td><div class="wname"><i>${w.id}</i><div><b>${w.name}</b><span>${w.fam}</span><small>${PORT[w.id][0]}</small></div></div></td><td class="v">${w.g}<small>${w.gs}</small></td><td class="v">${w.un}</td><td class="v">${w.lf}</td><td>${w.ls}</td><td class="v">${w.w}</td><td class="small">${w.x}</td><td class="v">${Math.round(fit(w,TODAY)*100)}%</td></tr>`).join("")}</tbody>`;
+ $("#anchors").innerHTML=`<p>Growth anchors: Acemoglu, about 0.07 points a year (<a href="https://www.nber.org/papers/w32487">NBER</a>); institutional forecasts of 0.1 to 1.5 points, AI insiders 3% to 30% (<a href="https://tecunningham.github.io/posts/2025-10-19-forecasts-of-AI-growth.html">Cunningham's compilation</a>); Jones and Tonetti, about 2.3% to 13% total growth depending on how far automation spreads (<a href="https://web.stanford.edu/~chadj/slides-AIandEconomicFuture.pdf">slides</a>); Epoch GATE, 20% and above in full automation (<a href="https://epoch.ai/blog/announcing-gate">Epoch</a>).</p><p>Labour and wealth anchors: Chicago Fed and FRI survey of economists, participation 61.0% in 2030 and top-10% wealth 73–75% centrally, 55% and 80% by 2050 in the rapid-AI scenario (<a href="https://www.chicagofed.org/publications/working-papers/2026/2026-07">WP 2026-07</a>). Today: participation 61.9% (<a href="https://fred.stlouisfed.org/series/CIVPART">FRED</a>), top 10% about 69% of wealth, the sum of the Fed's <a href="https://fred.stlouisfed.org/series/WFRBST01134">top 1%</a> and <a href="https://fred.stlouisfed.org/series/WFRBSN09161">next 9%</a> series.</p><p>Ranges for worlds C to G go beyond what any published model pins down, so they are judgment. "Fit with today" scores each world against the branches today's numbers point to.</p>`;}
+
+/* sources */
+const SRC=[
+ ["Technology","METR time horizons","Task length AI completes at 50% and 80% success","Paused Sep 2026","https://metr.org/time-horizons/"],
+ ["Technology","Epoch AI benchmarks hub (incl. capability index)","Frontier scores across dozens of benchmarks; raw data download","Weekly","https://epoch.ai/benchmarks"],
+ ["Technology","Epoch AI trends and models database","Training compute, cost, chips, every notable model","Monthly","https://epoch.ai/trends"],
+ ["Technology","ARC Prize leaderboard","ARC-AGI-2 and ARC-AGI-3 scores and cost per task","With releases","https://arcprize.org/leaderboard"],
+ ["Technology","Scale AI leaderboards","Humanity's Last Exam, SWE-bench Pro","Irregular","https://labs.scale.com/leaderboard/humanitys_last_exam"],
+ ["Technology","Epoch AI data centres","Power capacity of the largest AI sites","Monthly","https://epoch.ai/graphs/largest-ai-data-centers-by-power-capacity"],
+ ["Technology","IFR World Robotics","Robot installations, stock and density","Yearly","https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally"],
+ ["Economy","SEC XBRL company data","Capex and cash flow straight from filings","Quarterly","https://data.sec.gov/api/xbrl/companyconcept/CIK0000789019/us-gaap/PaymentsToAcquirePropertyPlantAndEquipment.json"],
+ ["Economy","Epoch, price of thought","Cost of a fixed level of AI performance over time","Occasional","https://epoch.ai/publications/the-plunging-price-of-thought"],
+ ["Economy","Census Business Trends and Outlook Survey","Share of firms using AI, by sector","Every two weeks","https://www.census.gov/hfp/btos/downloads/National.xlsx"],
+ ["Economy","FRED (St. Louis Fed)","Unemployment, participation, productivity, labour share, prices, worker AI use","Monthly or quarterly","https://fred.stlouisfed.org/series/PRS88003173"],
+ ["Economy","BLS Productivity and Costs","Output per hour, pay per hour, unit labour costs","Quarterly","https://www.dol.gov/newsroom/economicdata/prod2_11052026.pdf"],
+ ["Economy","Stanford Digital Economy Lab, Canaries","Employment of young workers by AI exposure","Twice a year","https://digitaleconomy.stanford.edu/news/canariesaug26/"],
+ ["Economy","Anthropic Economic Index","Which tasks and jobs use AI, automation vs augmentation","Quarterly","https://www.anthropic.com/research/economic-index-march-2026-report"],
+ ["Economy","NY Fed college labour market","Recent graduates' unemployment and underemployment","Quarterly","https://www.newyorkfed.org/research/college-labor-market"],
+ ["Economy","Challenger job-cuts reports","Announced layoffs, with AI as a stated reason","Monthly","https://www.challengergray.com/blog/october-layoffs-at-three-year-low-seasonal-hiring-plans-up-26/"],
+ ["Economy","India PLFS (MoSPI)","Monthly unemployment, including urban youth","Monthly","https://www.mospi.gov.in/uploads/latestReleases/latest_release_1794821636269_817c2262-e357-4db4-924d-486d18de277b_Monthly_Press_note_PLFS_Oct_2026.pdf"],
+ ["Safety","Lab system cards","Evaluation awareness, deception and sabotage rates","With each model","https://assets.claude.com/fc1b44717c85dc068bc6ba5024219938094694bd.pdf"],
+ ["Safety","UK AI Security Institute","Cyber, self-replication and jailbreak trends","Occasional","https://aisi.gov.uk/frontier-ai-trends-report"],
+ ["Power","OpenRouter data","Token and spend shares by model and provider","Monthly","https://openrouter.ai/zh-CN/data/october-2026"],
+ ["Power","Epoch AI chip owners and imports","Who owns AI compute, by company and country","Quarterly","https://epoch.ai/data/ai-chip-owners"],
+ ["Power","Fed Distributional Financial Accounts","Wealth shares by percentile","Quarterly","https://fred.stlouisfed.org/series/WFRBST01134"],
+ ["Power","CFR government investments tracker","Federal equity stakes in companies","Ongoing","https://www.cfr.org/articles/washingtons-growing-portfolio-tracking-u-s-government-investments"],
+ ["Forecasts","Metaculus","Community forecasts on AGI timing","Live","https://www.metaculus.com/questions/5121/date-of-artificial-general-intelligence/"],
+ ["Forecasts","Forecasting Research Institute (LEAP)","Expert and superforecaster panels","Periodic","https://forecastingresearch.substack.com/p/leap-wave-8-ai-timelines"],
+ ["Forecasts","Chicago Fed and FRI economists' survey","Growth, participation, inequality under AI scenarios","One-off, 2026","https://www.chicagofed.org/publications/working-papers/2026/2026-07"]
+];
+$("#srct").innerHTML=`<thead><tr><th>Dataset</th><th>Layer</th><th>What it measures</th><th>Updates</th></tr></thead><tbody>${SRC.map(r=>`<tr><td><a href="${r[4]}">${r[1]}</a></td><td><span class="tag" style="--lc:var(--${({Technology:"tech",Economy:"econ",Safety:"safe",Power:"power"})[r[0]]||"ink3"})">${r[0]}</span></td><td>${r[2]}</td><td class="muted">${r[3]}</td></tr>`).join("")}</tbody>`;
+$("#gaps").innerHTML=[["Robot cost per task","List prices exist; cost per completed task, against wages, does not. It decides the weak-link question."],["The human premium","How much more people pay for the human-made or human-delivered version of something. Unmeasured anywhere."],["Real human review","The share of consequential AI decisions that get informed human review. Nobody collects it."],["Long-task horizons after Sep 2026","METR paused its page; the frontier is above its test ceiling. A harder suite is needed."],["AI-attributed job creation","Layoffs blamed on AI are counted; jobs created because of AI are not."],["Distribution control","Who owns the routes models take to users (assistants, app stores, payments). No dataset tracks it."]].map(g=>`<div><b>${g[0]}</b><p>${g[1]}</p></div>`).join("");
+
+/* routing */
+const VIEWS=["map","paths","worlds","sources"];
+function show(){if(location.hash==="#readings"){history.replaceState(null,"","#worlds");}const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"map";VIEWS.forEach(x=>$("#v-"+x).hidden=x!==v);$$(".tab").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.v===v)));
+ document.documentElement.style.setProperty("--top",$("#top").offsetHeight+"px");
+ if(v==="map"){renderDetail(false);requestAnimationFrame(drawEdges);}if(v==="worlds")renderWorlds();window.scrollTo(0,0);
+ if(v==="worlds"&&state.jump){state.jump=false;requestAnimationFrame(()=>$("#worlds-table").scrollIntoView({block:"start"}));}}
+$$(".tab").forEach(t=>t.addEventListener("click",()=>{location.hash=t.dataset.v;}));
+addEventListener("hashchange",show);
+new ResizeObserver(()=>drawEdges()).observe($("#mapbox"));
+addEventListener("resize",()=>document.documentElement.style.setProperty("--top",$("#top").offsetHeight+"px"));
+renderDetail(false);updPath();renderWorlds();show();
+}
+</script>
+</body>
+</html>
